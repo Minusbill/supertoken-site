@@ -1,0 +1,849 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="dark" data-lang="zh">
+<head>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>SuperToken — 一个入口，调用全部主流大模型</title>
+    <meta name="description" content="SuperToken 提供兼容 OpenAI、Anthropic、图片生成和视频生成的统一 AI 网关，一个 Key 接入官网模型广场中的主流模型。"/>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+    <link href="site.css" rel="stylesheet"/>
+    <script src="https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js" defer></script>
+    <script>
+        // Theme init before paint — no flash
+        (function(){
+            const t = localStorage.getItem('st-theme') || 'dark';
+            const l = localStorage.getItem('st-lang') || 'zh';
+            document.documentElement.setAttribute('data-theme', t);
+            document.documentElement.setAttribute('data-lang', l);
+        })();
+    </script>
+    <style>
+        :root, [data-theme="dark"] {
+            --canvas: #080b0e;
+            --surface: #101419;
+            --surface-2: #171d23;
+            --line: #29313a;
+            --heading: #f5f7f9;
+            --body: #c3cad3;
+            --muted: #7c8794;
+            --accent: #4f8cff;
+            --accent-hover: #3478ee;
+            --accent-ink: #ffffff;
+            --accent-2: #38bdf8;
+            --save: #43d697;
+            --danger: #f6465d;
+            --code-bg: #0d1014;
+            --code-line: #1d222a;
+            --shadow-card: 0 1px 2px rgba(0,0,0,.5), 0 8px 24px rgba(0,0,0,.35);
+            --nav-shadow: 0 1px 16px rgba(0,0,0,.45);
+            color-scheme: dark;
+        }
+        [data-theme="light"] {
+            --canvas: #f4f6f8;
+            --surface: #ffffff;
+            --surface-2: #edf1f4;
+            --line: #d7dee5;
+            --heading: #151a20;
+            --body: #3f4852;
+            --muted: #6d7783;
+            --accent: #2563eb;
+            --accent-hover: #1d4ed8;
+            --accent-ink: #ffffff;
+            --accent-2: #087f86;
+            --save: #087a55;
+            --danger: #b4233a;
+            --code-bg: #14171c;
+            --code-line: #23282f;
+            --shadow-card: 0 1px 2px rgba(23,26,32,.06), 0 8px 24px rgba(23,26,32,.08);
+            --nav-shadow: 0 1px 16px rgba(23,26,32,.07);
+            color-scheme: light;
+        }
+        * { border-color: var(--line); }
+        html { scroll-behavior: smooth; }
+        body {
+            background-color: var(--canvas);
+            color: var(--body);
+            font-family: 'Manrope', 'PingFang SC', 'Microsoft YaHei', -apple-system, sans-serif;
+            -webkit-font-smoothing: antialiased;
+            transition: background-color .22s ease, color .22s ease;
+        }
+        .mono { font-family: 'IBM Plex Mono', 'SFMono-Regular', Consolas, monospace; font-variant-numeric: tabular-nums; }
+        .heading-c { color: var(--heading); }
+        .body-c { color: var(--body); }
+        .muted-c { color: var(--muted); }
+        .surface-c { background-color: var(--surface); }
+        .surface2-c { background-color: var(--surface-2); }
+
+        /* grain overlay */
+        body::before {
+            content: '';
+            position: fixed; inset: 0;
+            pointer-events: none; z-index: 1;
+            opacity: .35;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.04 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+        }
+
+        /* ticker */
+        .ticker-wrap { overflow: hidden; mask-image: linear-gradient(90deg, transparent, black 8%, black 92%, transparent); }
+        .ticker { display: flex; gap: 0; width: max-content; animation: ticker 46s linear infinite; }
+        .ticker:hover { animation-play-state: paused; }
+        @keyframes ticker { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+
+        /* reveal on scroll */
+        .reveal { opacity: 0; transform: translateY(16px); transition: opacity .55s cubic-bezier(.16,1,.3,1), transform .55s cubic-bezier(.16,1,.3,1); }
+        .reveal.in { opacity: 1; transform: none; }
+
+        /* buttons */
+        .btn-accent {
+            background: var(--accent); color: var(--accent-ink);
+            box-shadow: 0 4px 16px color-mix(in srgb, var(--accent) 18%, transparent);
+            transition: background .18s ease, box-shadow .18s ease, transform .12s ease;
+        }
+        .btn-accent:hover { background: var(--accent-hover); box-shadow: 0 6px 20px color-mix(in srgb, var(--accent) 28%, transparent); }
+        .btn-accent:active { transform: scale(.98); }
+        .btn-ghost {
+            background: transparent; color: var(--heading);
+            border: 1px solid var(--line);
+            transition: border-color .18s ease, background .18s ease, transform .12s ease;
+        }
+        .btn-ghost:hover { border-color: var(--muted); background: var(--surface); }
+        .btn-ghost:active { transform: scale(.98); }
+        .lang-switch { display:inline-flex; align-items:center; gap:2px; padding:2px; border:1px solid var(--line); border-radius:6px; background:var(--surface-2); }
+        .lang-switch button { min-width:30px; padding:4px 6px; border:0; border-radius:4px; color:var(--muted); font:600 10px 'IBM Plex Mono', monospace; transition:background .18s ease, color .18s ease; }
+        .lang-switch button:hover { color:var(--heading); }
+        .lang-switch button.active { background:var(--heading); color:var(--canvas); }
+        .header-api-key { white-space:nowrap; }
+        .hero-section { background-image: linear-gradient(rgba(255,255,255,.025) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.025) 1px, transparent 1px); background-size:48px 48px; background-position:center top; }
+        [data-theme="light"] .hero-section { background-image: linear-gradient(rgba(17,24,39,.035) 1px, transparent 1px), linear-gradient(90deg, rgba(17,24,39,.035) 1px, transparent 1px); }
+        .hero-terminal { box-shadow: 0 18px 56px rgba(0,0,0,.32), 0 0 0 1px color-mix(in srgb, var(--accent) 12%, transparent); }
+        .price-proof-table { background: var(--surface); border-color: var(--line); }
+        .price-proof-table thead tr { background: var(--surface-2); }
+        .price-proof-table tbody tr { transition: background .18s ease, box-shadow .18s ease; }
+        .price-proof-table tbody tr:hover { background: color-mix(in srgb, var(--accent) 8%, var(--surface)); box-shadow: inset 3px 0 0 var(--accent); }
+        .model-cell { display:inline-flex; align-items:center; gap:.65rem; min-width:15rem; }
+        .model-mark { width:1.85rem; height:1.85rem; flex:none; display:inline-flex; align-items:center; justify-content:center; padding:.24rem; border:1px solid color-mix(in srgb, #ffffff 82%, var(--line)); border-radius:6px; background:#ffffff; box-shadow:0 1px 4px rgba(0,0,0,.16); }
+        .model-mark img { width:100%; height:100%; display:block; object-fit:contain; }
+        .vendor-pill { padding:.2rem .45rem; border:1px solid var(--line); border-radius:999px; color:var(--muted); font:500 10px 'IBM Plex Mono', monospace; }
+        .price-current { color:var(--heading); font-weight:700; }
+        .ratio-pill { display:inline-flex; min-width:3.5rem; justify-content:center; padding:.25rem .45rem; border:1px solid color-mix(in srgb, var(--accent) 35%, var(--line)); border-radius:999px; color:var(--accent); background:color-mix(in srgb, var(--accent) 8%, transparent); }
+        .saving-pill { display:inline-flex; min-width:4.2rem; justify-content:center; padding:.25rem .55rem; border-radius:999px; color:var(--save); background:color-mix(in srgb, var(--save) 12%, transparent); font-weight:700; }
+        .home-layout { display:flex; flex-direction:column; }
+        #hero { order:1; }
+        #pricing-preview { order:2; }
+        #advantages { order:3; }
+        #faq { order:4; }
+        #failover, #quickstart, #final-cta { display:none; }
+        .hero-shell { gap:clamp(2rem, 5vw, 4rem); }
+        .hero-copy { flex:1 1 auto; max-width:700px; padding-right:1rem; }
+        .hero-title-lock { white-space:nowrap; }
+        .hero-terminal-wrap { display:none; }
+        .hero-model-plaza { flex:0 0 330px; align-self:stretch; margin-left:auto; }
+        .model-plaza-card { height:100%; padding:1.25rem; border:1px solid var(--line); border-radius:10px; background:color-mix(in srgb, var(--surface) 88%, transparent); box-shadow:var(--shadow-card); }
+        .model-plaza-head { display:flex; align-items:flex-start; justify-content:space-between; gap:1rem; padding-bottom:.85rem; border-bottom:1px solid var(--line); }
+        .model-plaza-list { display:grid; gap:.15rem; margin-top:.65rem; }
+        .model-plaza-row { display:flex; align-items:center; justify-content:space-between; gap:.75rem; padding:.65rem .45rem; border-radius:7px; transition:background .18s ease, transform .18s ease; }
+        .model-plaza-row:hover { background:color-mix(in srgb, var(--accent) 8%, transparent); transform:translateX(2px); }
+        .model-plaza-row > img { width:28px; height:28px; flex:none; object-fit:contain; padding:4px; border:1px solid color-mix(in srgb, #ffffff 82%, var(--line)); border-radius:6px; background:#ffffff; box-shadow:0 1px 4px rgba(0,0,0,.16); }
+        .model-plaza-name { flex:1; display:flex; flex-direction:column; gap:.12rem; min-width:0; }
+        .model-plaza-name strong { color:var(--heading); font-size:.82rem; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+        .model-plaza-name span { color:var(--muted); font:500 10px 'IBM Plex Mono', monospace; }
+        .model-plaza-ratio { flex:none; color:var(--accent); font:700 12px 'IBM Plex Mono', monospace; }
+        @media (max-width: 1023px) {
+            .hero-shell { flex-direction:column; gap:0; }
+            .hero-copy { max-width:none; padding-right:0; }
+            .hero-model-plaza { flex:0 0 auto; margin:1rem 0 0; width:100%; }
+        }
+        @media (max-width: 520px) {
+            #hero h1 { font-size:1.75rem; line-height:1.18; }
+            .hero-title-lock { white-space:nowrap; }
+        }
+        a:focus-visible, button:focus-visible, input:focus-visible {
+            outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 4px;
+        }
+
+        /* card hover */
+        .card { transition: border-color .2s ease, transform .2s ease; box-shadow: none; }
+        .card:hover { border-color: color-mix(in srgb, var(--muted) 60%, transparent); }
+
+        /* code tabs */
+        .ctab-btn { color: var(--muted); border-bottom: 2px solid transparent; transition: color .15s ease, border-color .15s ease; padding: 10px 14px; }
+        .ctab-btn:hover { color: var(--heading); }
+        .ctab-btn.active { color: var(--accent); border-bottom-color: var(--accent); }
+        .ctab-pane { display: none; }
+        .ctab-pane.active { display: block; }
+
+        /* fallback flow connectors */
+        .flow-arrow::after {
+            content: '→'; position: absolute; right: -1.35rem; top: 50%; transform: translateY(-50%);
+            color: var(--muted); font-size: .9rem;
+        }
+        @media (max-width: 767px) { .flow-arrow::after { display: none; } }
+
+        ::-webkit-scrollbar { width: 8px; height: 8px; }
+        [data-theme="dark"] ::-webkit-scrollbar-track { background: var(--canvas); }
+        [data-theme="dark"] ::-webkit-scrollbar-thumb { background: var(--line); border-radius: 4px; }
+        [data-theme="light"] ::-webkit-scrollbar-track { background: var(--canvas); }
+        [data-theme="light"] ::-webkit-scrollbar-thumb { background: var(--line); border-radius: 4px; }
+
+        @media (prefers-reduced-motion: reduce) {
+            .ticker { animation: none; }
+            .reveal { opacity: 1; transform: none; transition: none; }
+            html { scroll-behavior: auto; }
+        }
+    </style>
+</head>
+<body class="site-body min-h-dvh flex flex-col">
+
+<!-- ======================= NAV ======================= -->
+<nav class="st-nav" aria-label="主导航">
+    <div class="st-nav-inner">
+        <div class="st-nav-left">
+            <a href="index.html" class="st-brand">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true"><defs><linearGradient id="stlg" x1="3" y1="4" x2="21" y2="20" gradientUnits="userSpaceOnUse"><stop stop-color="#38bdf8"/><stop offset="1" stop-color="#2563eb"/></linearGradient></defs><rect x="3" y="4" width="18" height="4.4" rx="1" fill="url(#stlg)"/><rect x="3" y="10" width="12" height="4.4" rx="1" fill="var(--heading)" opacity=".9"/><rect x="3" y="16" width="7" height="4.4" rx="1" fill="var(--muted)"/></svg>
+                <span class="st-brand-name">SuperToken</span>
+            </a>
+            <div class="st-nav-links">
+                <a href="index.html" class="st-nav-link active" aria-current="page"><span data-i18n="nav.home">首页</span></a>
+                <a href="models.html" class="st-nav-link"><span data-i18n="nav.models">模型广场</span></a>
+                <a href="pricing.html" class="st-nav-link"><span data-i18n="nav.pricing">定价</span></a>
+                <a href="https://docs.supertoken.cc/" target="_blank" rel="noopener noreferrer" class="st-nav-link"><span data-i18n="nav.docs">文档</span></a>
+                <a href="status.html" class="st-nav-link"><span data-i18n="nav.statusLink">状态</span></a>
+            </div>
+        </div>
+        <div class="st-nav-actions">
+            <div class="st-lang" role="group" aria-label="Language">
+                <button type="button" id="lang-zh" class="active" aria-pressed="true">中</button><button type="button" id="lang-en" aria-pressed="false">EN</button>
+            </div>
+            <button id="theme-toggle" aria-label="切换亮暗主题" class="st-icon-button"><span id="theme-icon"><i data-lucide="sun"></i></span></button>
+            <a href="status.html" class="st-status-link"><span class="st-status-dot"></span><span data-i18n="nav.status">线路状态</span></a>
+            <a href="https://supertoken.cc/login" class="st-console"><span data-i18n="nav.apiKey">控制台</span></a>
+            <button id="nav-menu" class="st-icon-button st-menu-button" aria-label="打开导航" aria-expanded="false" aria-controls="mobile-nav"><span><i data-lucide="menu"></i></span></button>
+        </div>
+    </div>
+    <div id="mobile-nav" class="st-mobile-nav">
+        <a href="index.html" class="active"><span data-i18n="nav.home">首页</span></a><a href="models.html"><span data-i18n="nav.models">模型广场</span></a><a href="pricing.html"><span data-i18n="nav.pricing">定价</span></a><a href="https://docs.supertoken.cc/" target="_blank" rel="noopener noreferrer"><span data-i18n="nav.docs">文档</span></a><a href="status.html"><span data-i18n="nav.statusLink">状态</span></a>
+    </div>
+</nav>
+
+<main class="home-layout flex-1 pt-14 relative z-auto">
+
+<!-- ======================= HERO ======================= -->
+<section id="hero" class="hero-section relative overflow-hidden">
+
+    <div class="hero-shell max-w-[1200px] mx-auto px-4 sm:px-6 pt-10 sm:pt-12 pb-6 flex relative">
+        <!-- Left -->
+        <div class="hero-copy space-y-6">
+            <h1 class="text-[2.5rem] leading-[1.12] sm:text-[2.9rem] font-extrabold tracking-tight heading-c" style="text-wrap: balance;">
+                <span class="hero-title-lock" data-i18n="hero.title" data-i18n-html="true">Claude、GPT、Gemini，<br/>一套 API 全接好。</span>
+            </h1>
+            <p class="text-[16px] leading-relaxed max-w-[40rem]" data-i18n="hero.description">
+                一个 Key，统一接入 GPT、Claude、Gemini 以及图片、视频模型。兼容 OpenAI 与 Anthropic 格式，工具和业务共用同一个入口。
+            </p>
+
+            <!-- endpoint copy -->
+            <div class="flex flex-col sm:flex-row gap-3 max-w-lg">
+                <button id="copy-endpoint" class="group flex items-center gap-3 px-4 py-3 rounded-lg border surface-c mono text-[13.5px] heading-c text-left flex-1 min-w-0 transition-colors hover:border-current" style="--tw:1;">
+                    <span class="truncate">https://api.supertoken.cc/v1</span>
+                    <span id="copy-endpoint-label" class="ml-auto shrink-0 text-[11px] px-2 py-0.5 rounded border muted-c group-hover:heading-c transition-colors" data-i18n="hero.copy">复制</span>
+                </button>
+                <a href="https://docs.supertoken.cc/guide/" target="_blank" rel="noopener noreferrer" class="btn-accent inline-flex items-center justify-center px-5 py-3 rounded-lg text-sm font-bold whitespace-nowrap"><span data-i18n="hero.start">开始接入</span></a>
+            </div>
+            <div class="flex flex-wrap gap-x-5 gap-y-1.5 text-[12.5px] muted-c">
+                <span data-i18n="hero.compatOpenAI">✓ OpenAI 协议兼容</span>
+                <span data-i18n="hero.compatAnthropic">✓ Anthropic 原生协议</span>
+                <span data-i18n="hero.balance">✓ 图片与视频 API</span>
+            </div>
+        </div>
+
+        <div class="hero-model-plaza">
+            <div class="model-plaza-card">
+                <div class="model-plaza-head">
+                    <div>
+                        <span class="mono text-[10px] tracking-[.18em] uppercase" style="color:var(--accent);" data-i18n="models.kicker">MODEL PLAZA</span>
+                        <h2 class="heading-c text-lg font-bold mt-1" data-i18n="models.title">主流模型一览</h2>
+                    </div>
+                    <span class="mono text-[10px] muted-c" data-i18n="models.online">官网 81 个模型</span>
+                </div>
+                <div class="model-plaza-list">
+                    <a href="models.html" class="model-plaza-row">
+                        <img width="28" height="28" loading="lazy" src="https://api.iconify.design/logos:anthropic-icon.svg" alt="Anthropic"/>
+                        <span class="model-plaza-name"><strong>Claude Opus 5</strong><span>Anthropic</span></span>
+                        <span class="model-plaza-ratio" data-i18n="models.tag.reasoning">推理</span>
+                    </a>
+                    <a href="models.html" class="model-plaza-row">
+                        <img width="28" height="28" loading="lazy" src="https://api.iconify.design/logos:openai-icon.svg" alt="OpenAI"/>
+                        <span class="model-plaza-name"><strong>GPT-5.6 Sol</strong><span>OpenAI</span></span>
+                        <span class="model-plaza-ratio" data-i18n="models.tag.general">通用</span>
+                    </a>
+                    <a href="models.html" class="model-plaza-row">
+                        <img width="28" height="28" loading="lazy" src="https://api.iconify.design/simple-icons:googlegemini.svg?color=%234285F4" alt="Google Gemini"/>
+                        <span class="model-plaza-name"><strong>Gemini 3.7 Flash</strong><span>Google</span></span>
+                        <span class="model-plaza-ratio" data-i18n="models.tag.multimodal">多模态</span>
+                    </a>
+                    <a href="models.html" class="model-plaza-row">
+                        <img width="28" height="28" loading="lazy" src="https://api.iconify.design/logos:openai-icon.svg" alt="OpenAI"/>
+                        <span class="model-plaza-name"><strong>GPT Image 2</strong><span>OpenAI Image</span></span>
+                        <span class="model-plaza-ratio" data-i18n="models.tag.image">生图</span>
+                    </a>
+                    <a href="models.html" class="model-plaza-row">
+                        <img width="28" height="28" loading="lazy" src="https://api.iconify.design/simple-icons:bytedance.svg?color=%23000000" alt="ByteDance"/>
+                        <span class="model-plaza-name"><strong>Seedance 2.0 Fast</strong><span>Video · 720p</span></span>
+                        <span class="model-plaza-ratio" data-i18n="models.tag.video">视频</span>
+                    </a>
+                </div>
+                <p class="mono text-[10px] leading-relaxed muted-c mt-3 pt-3 border-t" data-i18n="models.foot">这里只展示代表型号，完整可用模型与实时价格以官网模型广场为准。</p>
+            </div>
+        </div>
+
+        <!-- Right: terminal (kept dark in both themes for contrast) -->
+        <div class="hero-terminal-wrap lg:col-span-6 relative">
+            <div class="hero-terminal rounded-xl overflow-hidden border" style="background: var(--code-bg); border-color: var(--code-line);">
+                <div class="px-4 py-2.5 border-b flex items-center" style="border-color: var(--code-line);">
+                    <div class="flex items-center gap-1.5">
+                        <span class="w-2.5 h-2.5 rounded-full" style="background:#f6465d;"></span>
+                        <span class="w-2.5 h-2.5 rounded-full" style="background:#a78bfa;"></span>
+                        <span class="w-2.5 h-2.5 rounded-full" style="background:#0ecb81;"></span>
+                    </div>
+                </div>
+                <!-- tabs -->
+                <div class="flex overflow-x-auto border-b" style="border-color: var(--code-line);">
+                    <button class="ctab-btn active mono text-xs" data-tab="curl" onclick="switchTab('curl')" data-i18n="terminal.curl">cURL</button>
+                    <button class="ctab-btn mono text-xs" data-tab="python" onclick="switchTab('python')" data-i18n="terminal.python">Python</button>
+                    <button class="ctab-btn mono text-xs" data-tab="nodejs" onclick="switchTab('nodejs')" data-i18n="terminal.node">Node.js</button>
+                    <button class="ctab-btn mono text-xs" data-tab="claude-code" onclick="switchTab('claude-code')" data-i18n="terminal.claude">Claude Code</button>
+                </div>
+                <div class="p-4 mono text-[12px] leading-[1.75] overflow-x-auto" style="color:#c8ced8;">
+                    <pre id="ctab-curl" class="ctab-pane active"><span style="color:#566070;"># 直接调 Claude 最强模型</span>
+curl https://api.supertoken.cc/v1/chat/completions \
+  -H "Authorization: Bearer sk-st-..." \
+  -H "Content-Type: application/json" \
+  -d '{
+    "model": "<span style="color:#a78bfa;">claude-opus-5</span>",
+    "messages": [{"role":"user","content":"用 Rust 写高并发 Actor 池"}],
+    "stream": true
+  }'</pre>
+<pre id="ctab-python" class="ctab-pane"><span style="color:#566070;"># 标准 OpenAI SDK，改一行 base_url</span>
+from openai import OpenAI
+
+client = OpenAI(
+    base_url=<span style="color:#0ecb81;">"https://api.supertoken.cc/v1"</span>,
+    api_key=<span style="color:#0ecb81;">"sk-st-..."</span>,
+)
+resp = client.chat.completions.create(
+    model=<span style="color:#a78bfa;">"gpt-5.6-sol"</span>,
+    messages=[{<span style="color:#a78bfa;">"role"</span>:<span style="color:#a78bfa;">"user"</span>, <span style="color:#a78bfa;">"content"</span>:<span style="color:#a78bfa;">"证明这道极限题"</span>}],
+)</pre>
+<pre id="ctab-nodejs" class="ctab-pane"><span style="color:#566070;">// OpenAI Node.js SDK</span>
+import OpenAI from "openai";
+
+const client = new OpenAI({
+  baseURL: <span style="color:#0ecb81;">"https://api.supertoken.cc/v1"</span>,
+  apiKey: <span style="color:#0ecb81;">"sk-st-..."</span>,
+});
+const res = await client.chat.completions.create({
+  model: <span style="color:#a78bfa;">"gpt-5.6-sol"</span>,
+  messages: [{ role: <span style="color:#a78bfa;">"user"</span>, content: <span style="color:#a78bfa;">"审查这段并发代码"</span> }],
+});</pre>
+<pre id="ctab-claude-code" class="ctab-pane"><span style="color:#566070;"># ~/.claude/settings.json 或 Cursor Override</span>
+{
+  <span style="color:#a78bfa;">"ANTHROPIC_BASE_URL"</span>: <span style="color:#0ecb81;">"https://api.supertoken.cc"</span>,
+  <span style="color:#a78bfa;">"ANTHROPIC_AUTH_TOKEN"</span>: <span style="color:#0ecb81;">"sk-st-..."</span>
+}
+<span style="color:#566070;"># Cursor: Settings → Models → Override Base URL 同理</span></pre>
+                </div>
+                <!-- telemetry strip -->
+                <div class="border-t px-4 py-3 grid grid-cols-2 sm:grid-cols-4 gap-3" style="border-color: var(--code-line); background:#0a0d10;">
+                    <div>
+                        <div class="text-[10px] mono" style="color:#566070;" data-i18n="terminal.ttft">首字延迟 TTFT</div>
+                        <div class="mono text-[13px] font-semibold mt-0.5" style="color:#f2f4f7;">182 ms</div>
+                    </div>
+                    <div>
+                        <div class="text-[10px] mono" style="color:#566070;" data-i18n="terminal.throughput">吞吐</div>
+                        <div class="mono text-[13px] font-semibold mt-0.5" style="color:#0ecb81;">152 tok/s</div>
+                    </div>
+                    <div>
+                        <div class="text-[10px] mono" style="color:#566070;" data-i18n="terminal.tokens">本次 Token</div>
+                        <div class="mono text-[13px] font-semibold mt-0.5" style="color:#f2f4f7;">1,280 / 840</div>
+                    </div>
+                    <div>
+                        <div class="text-[10px] mono" style="color:#566070;" data-i18n="terminal.cost">实际费用</div>
+                        <div class="mono text-[13px] font-semibold mt-0.5" style="color:#a78bfa;">¥0.009 <span style="color:#0ecb81;">省65%</span></div>
+                    </div>
+                </div>
+            </div>
+            <!-- floating badge overlapping terminal edge -->
+            <div class="hidden sm:flex absolute -bottom-4 left-6 items-center gap-2 px-3.5 py-2 rounded-lg border text-[11.5px] mono"
+                 style="background: var(--surface); border-color: var(--line); box-shadow: var(--shadow-card);">
+                <span class="w-1.5 h-1.5 rounded-full animate-pulse" style="background:var(--save);"></span>
+                <span class="heading-c" data-i18n="terminal.failover">上游 429 → 热备池接管</span>
+                <span muted-c style="color:var(--muted)" data-i18n="terminal.failoverTime">耗时 0ms</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- ============ PRICE TICKER ============ -->
+    <div id="status-panel" class="mt-2" style="background: var(--surface); border-top: 1px solid var(--line); border-bottom: 1px solid var(--line);">
+        <div class="max-w-[1200px] mx-auto px-4 sm:px-6 py-2.5 flex items-center gap-4">
+            <span class="shrink-0 mono text-[10.5px] tracking-widest uppercase muted-c hidden sm:block" data-i18n="ticker.label">精选价格 · 官方 vs 本站</span>
+            <div class="ticker-wrap flex-1">
+                <div class="ticker mono text-[12px]" id="price-ticker"><!-- JS fills --></div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ======================= VALUE PROPS ======================= -->
+<section id="advantages">
+    <div class="max-w-[1200px] mx-auto px-4 sm:px-6 py-12 sm:py-16">
+        <div class="reveal max-w-2xl space-y-2.5 mb-8">
+            <span class="mono text-[11px] tracking-widest uppercase" style="color: var(--accent);" data-i18n="advantages.kicker">WHY SUPERTOKEN</span>
+            <h2 class="text-3xl sm:text-4xl font-extrabold tracking-tight heading-c" data-i18n="advantages.title">我们的优势</h2>
+            <p class="text-[15px] leading-relaxed" data-i18n="advantages.body">少维护一套接口，把预算和时间留给真正要上线的产品。</p>
+        </div>
+        <div class="reveal grid grid-cols-1 md:grid-cols-12 gap-px rounded-xl overflow-hidden border" style="background: var(--line);">
+            <!-- hairline-grid cells instead of 3 floating cards -->
+            <div class="md:col-span-4 p-7 space-y-2.5" style="background: var(--canvas);">
+                <div class="mono text-[11px] tracking-widest uppercase" style="color: var(--accent);" data-i18n="value.one.kicker">01 · 一条路</div>
+                <h3 class="text-lg font-bold heading-c" data-i18n="value.one.title">接入一次，模型随便换</h3>
+                <p class="text-[14px] leading-relaxed" data-i18n="value.one.body">OpenAI 协议和 Anthropic 原生协议都兼容。换模型改一个字符串，其他代码不动。</p>
+            </div>
+            <div class="md:col-span-4 p-7 space-y-2.5" style="background: var(--canvas);">
+                <div class="mono text-[11px] tracking-widest uppercase" style="color: var(--accent);" data-i18n="value.two.kicker">02 · 不过期</div>
+                <h3 class="text-lg font-bold heading-c" data-i18n="value.two.title">余额长期有效</h3>
+                <p class="text-[14px] leading-relaxed" data-i18n="value.two.body">充值按用量扣费，没有月费，没用完的余额下个月还在。</p>
+            </div>
+            <div class="md:col-span-4 p-7 space-y-2.5" style="background: var(--canvas);">
+                <div class="mono text-[11px] tracking-widest uppercase" style="color: var(--accent);" data-i18n="value.three.kicker">03 · 摊开算</div>
+                <h3 class="text-lg font-bold heading-c" data-i18n="value.three.title">账单可以逐笔核对</h3>
+                <p class="text-[14px] leading-relaxed" data-i18n="value.three.body">每次请求记下 Token 用量和扣费金额。对不上账的时候，你能查到是哪一笔。</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ======================= FAILOVER ======================= -->
+<section id="failover" style="background: var(--surface);">
+    <div class="max-w-[1200px] mx-auto px-4 sm:px-6 py-12 sm:py-16 space-y-8">
+        <div class="reveal max-w-2xl space-y-3">
+            <span class="mono text-[11px] tracking-widest uppercase" style="color: var(--accent);" data-i18n="failover.kicker">顺序回退 · Failover Groups</span>
+            <h2 class="text-3xl sm:text-4xl font-extrabold tracking-tight heading-c" data-i18n="failover.title">主渠道故障，自动切到备用渠道。</h2>
+            <p class="text-[15px] leading-relaxed" data-i18n="failover.body">同一个分组里可以放多个渠道，按优先级排序。主渠道返回 429 或超时时，网关在这次请求内改走下一个渠道，客户端看到的仍然是一次正常完成的响应。</p>
+        </div>
+
+        <div class="reveal grid grid-cols-1 md:grid-cols-4 gap-4 md:gap-8">
+            <div class="relative flow-arrow space-y-3">
+                <div class="mono text-[12px] w-9 h-9 rounded-md flex items-center justify-center font-bold border" style="color:var(--accent); border-color: var(--line); background: var(--canvas);">1</div>
+                        <h3 class="font-bold heading-c text-[15px]" data-i18n="failover.step1.title">请求进入分组</h3>
+                        <p class="text-[13px] leading-relaxed muted-c" data-i18n="failover.step1.body">网关校验鉴权后，命中分组内优先级最高的渠道。</p>
+            </div>
+            <div class="relative flow-arrow space-y-3">
+                <div class="mono text-[12px] w-9 h-9 rounded-md flex items-center justify-center font-bold border" style="color:var(--accent); border-color: var(--line); background: var(--canvas);">2</div>
+                        <h3 class="font-bold heading-c text-[15px]" data-i18n="failover.step2.title">主链路优先</h3>
+                        <p class="text-[13px] leading-relaxed muted-c" data-i18n="failover.step2.body">正常时始终走延迟最低的主通道，成本与速度兼顾。</p>
+            </div>
+            <div class="relative flow-arrow space-y-3">
+                <div class="mono text-[12px] w-9 h-9 rounded-md flex items-center justify-center font-bold border" style="color:var(--danger); border-color: color-mix(in srgb, var(--danger) 40%, transparent); background: var(--canvas);">3</div>
+                        <h3 class="font-bold heading-c text-[15px]" data-i18n="failover.step3.title">异常即刻切换</h3>
+                        <p class="text-[13px] leading-relaxed muted-c" data-i18n="failover.step3.body">429 / 超时 / 5xx 触发回退，下一个热备渠道顶上。</p>
+            </div>
+            <div class="space-y-3">
+                <div class="mono text-[12px] w-9 h-9 rounded-md flex items-center justify-center font-bold border" style="color:var(--save); border-color: color-mix(in srgb, var(--save) 40%, transparent); background: var(--canvas);">4</div>
+                    <h3 class="font-bold heading-c text-[15px]" data-i18n="failover.step4.title">流式无感续传</h3>
+                    <p class="text-[13px] leading-relaxed muted-c" data-i18n="failover.step4.body">SSE 长连接保持输出，调用方看到的只是一次正常响应。</p>
+            </div>
+        </div>
+
+        <!-- mini config sample -->
+        <div class="reveal rounded-lg border overflow-hidden max-w-3xl" style="background: var(--code-bg); border-color: var(--code-line);">
+            <div class="px-4 py-2 border-b mono text-[11px]" style="border-color: var(--code-line); color:#566070;" data-i18n="failover.config">分组配置示例 — claude-max</div>
+            <pre class="p-4 mono text-[12px] leading-[1.75] overflow-x-auto" style="color:#c8ced8;"><span style="color:#a78bfa;">channels</span>: [
+  { <span style="color:#a78bfa;">name</span>: <span style="color:#0ecb81;">"ClaudeCode·MAX订阅号池"</span>, <span style="color:#a78bfa;">priority</span>: 1, <span style="color:#a78bfa;">weight</span>: 10 },
+  { <span style="color:#a78bfa;">name</span>: <span style="color:#0ecb81;">"Kiro号池·热备"</span>,          <span style="color:#a78bfa;">priority</span>: 2 },
+  { <span style="color:#a78bfa;">name</span>: <span style="color:#0ecb81;">"官方直连·兜底"</span>,           <span style="color:#a78bfa;">priority</span>: 3 }
+]
+<span style="color:#566070;"># 任一渠道异常 → 按.priority顺序回退，单次请求内完成</span></pre>
+        </div>
+    </div>
+</section>
+
+<!-- ======================= PRICE TEASER ======================= -->
+<section id="pricing-preview">
+    <div class="max-w-[1200px] mx-auto px-4 sm:px-6 pt-8 sm:pt-10 pb-12 sm:pb-14 space-y-6">
+        <div class="reveal flex flex-col sm:flex-row sm:items-end justify-between gap-4">
+            <div class="space-y-2 max-w-xl">
+                <span class="mono text-[11px] tracking-widest uppercase" style="color: var(--accent);" data-i18n="price.kicker">PRICE PROOF / NO HIDDEN MATH</span>
+                <h2 class="text-3xl sm:text-4xl font-extrabold tracking-tight heading-c" data-i18n="price.title">和官方比比价</h2>
+                <p class="text-[15px]" data-i18n="price.body">只选 3 个代表模型，按同一型号和单位对齐官方价与本站充值价。</p>
+            </div>
+            <a href="pricing.html" class="btn-ghost shrink-0 inline-flex items-center gap-1.5 px-5 py-2.5 rounded-lg text-sm font-semibold">
+                <span data-i18n="price.full">查看精选比价与实时目录</span> <span aria-hidden="true">→</span>
+            </a>
+        </div>
+
+        <div class="reveal price-proof-table rounded-xl border overflow-x-auto" style="box-shadow: var(--shadow-card);">
+            <table class="w-full min-w-[720px] text-[13.5px]">
+                <thead>
+                    <tr class="mono text-[10.5px] tracking-wider uppercase text-left" style="background: var(--surface-2); color: var(--muted);">
+                        <th class="px-5 py-3 font-medium" data-i18n="price.table.model">模型</th>
+                        <th class="px-5 py-3 font-medium text-right" data-i18n="price.table.official">官方输入价 / 1M</th>
+                        <th class="px-5 py-3 font-medium text-right" data-i18n="price.table.best">本站充值价 / 1M</th>
+                        <th class="px-5 py-3 font-medium text-right" data-i18n="price.table.ratio">倍率</th>
+                        <th class="px-5 py-3 font-medium text-right" data-i18n="price.table.save">节省</th>
+                    </tr>
+                </thead>
+                <tbody class="mono" id="teaser-body"><!-- JS fills --></tbody>
+            </table>
+        </div>
+        <p class="mono text-[10px] muted-c" data-i18n="price.disclaimer">USD / 1M tokens，数据核对于 2026-08-26。价格会变化，实际扣费以官网模型广场与控制台使用日志为准。</p>
+    </div>
+</section>
+
+<!-- ======================= QUICKSTART / INTEGRATIONS ======================= -->
+<section id="quickstart" style="background: var(--surface);">
+    <div class="max-w-[1200px] mx-auto px-4 sm:px-6 py-12 sm:py-16 space-y-8">
+        <div class="reveal max-w-2xl space-y-3">
+            <span class="mono text-[11px] tracking-widest uppercase" style="color: var(--accent);" data-i18n="quickstart.kicker">三步拿到钥匙</span>
+            <h2 class="text-3xl sm:text-4xl font-extrabold tracking-tight heading-c" data-i18n="quickstart.title">三步完成接入。</h2>
+        </div>
+        <div class="reveal grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div class="space-y-2.5">
+                <div class="mono text-[26px] font-bold heading-c opacity-30">01</div>
+                <h3 class="font-bold heading-c" data-i18n="quickstart.step1.title">创建 API Key</h3>
+                <p class="text-[13.5px] leading-relaxed muted-c" data-i18n="quickstart.step1.body">注册后在控制台生成 Key，不需要 OpenAI 或 Anthropic 的账号。</p>
+            </div>
+            <div class="space-y-2.5">
+                <div class="mono text-[26px] font-bold heading-c opacity-30">02</div>
+                <h3 class="font-bold heading-c" data-i18n="quickstart.step2.title">改一行 base_url</h3>
+                <p class="text-[13.5px] leading-relaxed muted-c" data-i18n="quickstart.step2.body">OpenAI SDK 使用 api.supertoken.cc/v1，Claude Code 通常使用不带 /v1 的地址。</p>
+            </div>
+            <div class="space-y-2.5">
+                <div class="mono text-[26px] font-bold heading-c opacity-30">03</div>
+                <h3 class="font-bold heading-c" data-i18n="quickstart.step3.title">核对用量</h3>
+                <p class="text-[13.5px] leading-relaxed muted-c" data-i18n="quickstart.step3.body">控制台按请求列出 Token 用量和扣费，可以逐笔检查。</p>
+            </div>
+        </div>
+
+        <div class="reveal pt-4">
+            <p class="mono text-[11px] tracking-widest uppercase muted-c mb-4" data-i18n="quickstart.clients">已验证可用的客户端</p>
+            <div class="flex flex-wrap gap-2.5">
+                <span class="px-4 py-2 rounded-lg border surface-c text-[13px] heading-c font-semibold">Claude Code CLI</span>
+                <span class="px-4 py-2 rounded-lg border surface-c text-[13px] heading-c font-semibold">Cursor</span>
+                <span class="px-4 py-2 rounded-lg border surface-c text-[13px] heading-c font-semibold">Codex CLI</span>
+                <span class="px-4 py-2 rounded-lg border surface-c text-[13px] heading-c font-semibold">Antigravity</span>
+                <span class="px-4 py-2 rounded-lg border surface-c text-[13px] heading-c font-semibold">Cline / RooCode</span>
+                <span class="px-4 py-2 rounded-lg border surface-c text-[13px] heading-c font-semibold">Dify / FastGPT</span>
+                <span class="px-4 py-2 rounded-lg border surface-c text-[13px] heading-c font-semibold">Cherry Studio</span>
+                <span class="px-4 py-2 rounded-lg border surface-c text-[13px] heading-c font-semibold">NextChat</span>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ======================= FAQ ======================= -->
+<section id="faq">
+    <div class="max-w-[1200px] mx-auto px-4 sm:px-6 py-12 sm:py-16">
+        <div class="reveal grid grid-cols-1 lg:grid-cols-12 gap-10">
+            <div class="lg:col-span-4 space-y-3">
+                <span class="mono text-[11px] tracking-widest uppercase" style="color: var(--accent);">FAQ</span>
+                <h2 class="text-3xl font-extrabold tracking-tight heading-c" data-i18n="faq.title">常见问题</h2>
+                <p class="text-[14px] muted-c" data-i18n="faq.intro">没覆盖到的问题，联系客服或查文档。</p>
+            </div>
+            <!-- side-by-side list instead of accordion -->
+            <div class="lg:col-span-8 divide-y">
+                <details class="group py-5">
+                    <summary class="flex items-center justify-between cursor-pointer list-none gap-4">
+                        <span class="font-bold heading-c text-[15.5px]" data-i18n="faq.q1">需要先注册 OpenAI、Anthropic 或 Google 的账号吗？</span>
+                        <span class="mono muted-c group-open:hidden">+</span>
+                        <span class="mono muted-c hidden group-open:inline">−</span>
+                    </summary>
+                    <p class="mt-3 text-[14px] leading-relaxed" data-i18n="faq.a1">不需要。注册 SuperToken 并创建 API Key 后，按官网模型广场当前开放范围调用。</p>
+                </details>
+                <details class="group py-5">
+                    <summary class="flex items-center justify-between cursor-pointer list-none gap-4">
+                        <span class="font-bold heading-c text-[15.5px]" data-i18n="faq.q2">充值余额会不会过期？</span>
+                        <span class="mono muted-c group-open:hidden">+</span>
+                        <span class="mono muted-c hidden group-open:inline">−</span>
+                    </summary>
+                    <p class="mt-3 text-[14px] leading-relaxed" data-i18n="faq.a2">不会。余额长期有效，按实际用量扣费，没用完的部分留在账户里。</p>
+                </details>
+                <details class="group py-5">
+                    <summary class="flex items-center justify-between cursor-pointer list-none gap-4">
+                        <span class="font-bold heading-c text-[15.5px]" data-i18n="faq.q3">为什么不同分组的折扣差这么多？</span>
+                        <span class="mono muted-c group-open:hidden">+</span>
+                        <span class="mono muted-c hidden group-open:inline">−</span>
+                    </summary>
+                    <p class="mt-3 text-[14px] leading-relaxed" data-i18n="faq.a3">折扣取决于分组背后的渠道来源。订阅号池类分组采购成本低，折扣就深；官方直连按原价走，换稳定性。每个分组的来源写在价格目录里，最终以控制台账单为准。</p>
+                </details>
+                <details class="group py-5">
+                    <summary class="flex items-center justify-between cursor-pointer list-none gap-4">
+                        <span class="font-bold heading-c text-[15.5px]" data-i18n="faq.q4">价格会变动吗？</span>
+                        <span class="mono muted-c group-open:hidden">+</span>
+                        <span class="mono muted-c hidden group-open:inline">−</span>
+                    </summary>
+                    <p class="mt-3 text-[14px] leading-relaxed" data-i18n="faq.a4">价格目录定期同步，调整会提前公告。计费以控制台账单为准。</p>
+                </details>
+                <details class="group py-5">
+                    <summary class="flex items-center justify-between cursor-pointer list-none gap-4">
+                        <span class="font-bold heading-c text-[15.5px]" data-i18n="faq.q5">调用出问题去哪里查？</span>
+                        <span class="mono muted-c group-open:hidden">+</span>
+                        <span class="mono muted-c hidden group-open:inline">−</span>
+                    </summary>
+                    <p class="mt-3 text-[14px] leading-relaxed" data-i18n="faq.a5">状态页看线路是否正常；接入问题查文档，账户和充值问题找客服。</p>
+                </details>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ======================= CTA ======================= -->
+<section id="final-cta" class="relative overflow-hidden">
+    <div class="absolute inset-0 pointer-events-none opacity-[0.06]"
+         style="background: radial-gradient(ellipse at 50% 120%, var(--accent) 0%, transparent 60%);"></div>
+    <div class="max-w-[1200px] mx-auto px-4 sm:px-6 py-14 sm:py-16 text-center space-y-5 reveal">
+        <h2 class="text-3xl sm:text-[2.6rem] font-extrabold tracking-tight heading-c" style="text-wrap: balance;" data-i18n="cta.title">先充一点，跑通再说。</h2>
+        <p class="text-[15px] max-w-md mx-auto" data-i18n="cta.body">创建 Key、改一行 base_url，几分钟就能发出第一个请求。觉得好用再续。</p>
+        <div class="flex flex-col sm:flex-row items-center justify-center gap-3 pt-2">
+            <a href="#" class="btn-accent px-7 py-3 rounded-lg text-sm font-bold" data-i18n="nav.apiKey">获取 API Key</a>
+            <a href="pricing.html" class="btn-ghost px-7 py-3 rounded-lg text-sm font-bold" data-i18n="price.view">查看价格目录</a>
+        </div>
+    </div>
+</section>
+</main>
+
+<!-- ======================= FOOTER ======================= -->
+<footer style="background: var(--surface); border-top: 1px solid var(--line);">
+    <div class="max-w-[1200px] mx-auto px-4 sm:px-6 py-10">
+        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-6">
+            <div class="flex items-center gap-2.5">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true"><defs><linearGradient id="stlg" x1="3" y1="4" x2="21" y2="20" gradientUnits="userSpaceOnUse"><stop stop-color="#38bdf8"/><stop offset="1" stop-color="#2563eb"/></linearGradient></defs>
+                    <rect x="3" y="4" width="18" height="4.4" rx="1" fill="url(#stlg)"/>
+                    <rect x="3" y="10" width="12" height="4.4" rx="1" fill="var(--heading)" opacity=".9"/>
+                    <rect x="3" y="16" width="7" height="4.4" rx="1" fill="var(--muted)"/>
+                </svg>
+                <span class="font-extrabold tracking-tight text-sm heading-c">SuperToken</span>
+                <span class="mono text-[11px] muted-c">© 2026</span>
+            </div>
+            <nav class="flex flex-wrap gap-x-6 gap-y-2 text-[12.5px]">
+                <a href="pricing.html" class="hover:opacity-70 transition-opacity" data-i18n="footer.pricing">价格目录</a>
+                <a href="status.html" class="hover:opacity-70 transition-opacity" data-i18n="footer.status">服务状态</a>
+                <a href="https://docs.supertoken.cc/" target="_blank" rel="noopener noreferrer" class="hover:opacity-70 transition-opacity" data-i18n="footer.docs">文档中心</a>
+                <a href="#" class="hover:opacity-70 transition-opacity" data-i18n="footer.privacy">隐私政策</a>
+                <a href="#" class="hover:opacity-70 transition-opacity" data-i18n="footer.terms">服务条款</a>
+            </nav>
+        </div>
+        <div class="mt-6 pt-5 border-t flex flex-col lg:flex-row lg:items-center gap-3">
+            <p class="mono text-[10px] tracking-widest uppercase muted-c shrink-0" data-i18n="footer.contact">联系支持</p>
+            <div class="flex flex-wrap gap-2">
+                <button type="button" class="contact-copy inline-flex items-center gap-2 px-3 py-2 rounded-md border surface-c text-[12px] heading-c transition-colors hover:border-[var(--muted)]" data-contact-value="minus502">
+                    <img src="https://api.iconify.design/simple-icons:wechat.svg?color=%2307C160" alt="WeChat" class="w-4 h-4 shrink-0"/><span data-i18n="footer.wechat">微信客服</span><code class="mono text-[11px] muted-c">minus502</code><span class="mono text-[10px] muted-c" data-contact-copy-label data-i18n="footer.copy">复制</span>
+                </button>
+                <button type="button" class="contact-copy inline-flex items-center gap-2 px-3 py-2 rounded-md border surface-c text-[12px] heading-c transition-colors hover:border-[var(--muted)]" data-contact-value="piplszy">
+                    <img src="https://api.iconify.design/simple-icons:wechat.svg?color=%2307C160" alt="WeChat" class="w-4 h-4 shrink-0"/><span data-i18n="footer.wechat">微信客服</span><code class="mono text-[11px] muted-c">piplszy</code><span class="mono text-[10px] muted-c" data-contact-copy-label data-i18n="footer.copy">复制</span>
+                </button>
+                <a href="https://x.com/memegoai" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-2 px-3 py-2 rounded-md border surface-c text-[12px] heading-c transition-colors hover:border-[var(--muted)]">
+                    <img src="https://api.iconify.design/logos:twitter.svg" alt="X / Twitter" class="w-4 h-4 shrink-0"/><span data-i18n="footer.twitter">Twitter</span><code class="mono text-[11px] muted-c">@memegoai</code><i data-lucide="arrow-up-right" class="w-3.5 h-3.5 muted-c" aria-hidden="true"></i>
+                </a>
+            </div>
+        </div>
+        <p class="mono text-[11px] muted-c mt-6 leading-relaxed max-w-3xl">
+            <span data-i18n="footer.legal">使用本服务时请遵守《生成式人工智能服务管理暂行办法》及相关适用法律法规，不得利用大模型生成或传播违法违规内容。</span>
+        </p>
+    </div>
+</footer>
+
+<script>
+/* ---------- theme ---------- */
+function updateThemeControl(theme) {
+    const isDark = theme === 'dark';
+    const label = isDark ? '切换到日间模式' : '切换到夜间模式';
+    const button = document.getElementById('theme-toggle');
+    document.getElementById('theme-icon').textContent = isDark ? '☀' : '☾';
+    button.setAttribute('aria-label', label);
+    button.setAttribute('title', label);
+}
+function initTheme() {
+    const t = document.documentElement.getAttribute('data-theme') || 'dark';
+    updateThemeControl(t);
+}
+function toggleTheme() {
+    const cur = document.documentElement.getAttribute('data-theme');
+    const next = cur === 'dark' ? 'light' : 'dark';
+    document.documentElement.setAttribute('data-theme', next);
+    localStorage.setItem('st-theme', next);
+    updateThemeControl(next);
+}
+document.getElementById('theme-toggle').addEventListener('click', toggleTheme);
+initTheme();
+
+/* ---------- language ---------- */
+const COPY = {
+    zh: {
+        'nav.home': '首页', 'nav.models': '模型广场', 'nav.pricing': '定价', 'nav.docs': '文档', 'nav.statusLink': '状态', 'nav.advantages': '我们的优势', 'nav.failover': '容灾回退', 'nav.quickstart': '快速接入', 'nav.faq': '常见问题',
+        'nav.status': '线路状态', 'nav.apiKey': '控制台',
+        'hero.title': 'Claude、GPT、Gemini，<br/>一套 API 全接好。',
+        'hero.description': '一个 Key，统一接入 GPT、Claude、Gemini 以及图片、视频模型。兼容 OpenAI 与 Anthropic 格式，工具和业务共用同一个入口。',
+        'hero.copy': '复制', 'hero.start': '开始接入', 'hero.compatOpenAI': '✓ OpenAI 协议兼容', 'hero.compatAnthropic': '✓ Anthropic 协议兼容', 'hero.balance': '✓ 图片与视频 API',
+        'terminal.curl': 'cURL', 'terminal.python': 'Python', 'terminal.node': 'Node.js', 'terminal.claude': 'Claude Code', 'terminal.ttft': '首字延迟 TTFT', 'terminal.throughput': '吞吐', 'terminal.tokens': '本次 Token', 'terminal.cost': '实际费用', 'terminal.failover': '上游 429 → 热备池接管', 'terminal.failoverTime': '耗时 0ms',
+        'ticker.label': '精选价格 · 官方 vs 本站',
+        'models.kicker': 'MODEL PLAZA', 'models.title': '主流模型一览', 'models.online': '官网 81 个模型', 'models.foot': '这里只展示代表型号，完整可用模型与实时价格以官网模型广场为准。', 'models.tag.reasoning': '推理', 'models.tag.general': '通用', 'models.tag.multimodal': '多模态', 'models.tag.realtime': '实时', 'models.tag.image': '生图', 'models.tag.video': '视频',
+        'advantages.kicker': 'WHY SUPERTOKEN', 'advantages.title': '我们的优势', 'advantages.body': '少维护一套接口，把预算和时间留给真正要上线的产品。',
+        'value.one.kicker': '01 · 一条路', 'value.one.title': '接入一次，模型随便换', 'value.one.body': 'OpenAI 协议和 Anthropic 原生协议都兼容。换模型改一个字符串，其他代码不动。',
+        'value.two.kicker': '02 · 团队管理', 'value.two.title': 'Key、权限与额度分开管理', 'value.two.body': '给不同成员分发独立 API Key，并按团队需要配置权限和额度。',
+        'value.three.kicker': '03 · 费用统计', 'value.three.title': '按模型、项目和成员核对费用', 'value.three.body': '控制台集中统计模型、项目与成员的实际消耗，方便预算和审计。',
+        'failover.kicker': '顺序回退 · Failover Groups', 'failover.title': '主渠道故障，自动切到备用渠道。', 'failover.body': '同一个分组里可以放多个渠道，按优先级排序。主渠道返回 429 或超时时，网关在这次请求内改走下一个渠道，客户端看到的仍然是一次正常完成的响应。',
+        'failover.step1.title': '请求进入分组', 'failover.step1.body': '网关校验鉴权后，命中分组内优先级最高的渠道。', 'failover.step2.title': '主链路优先', 'failover.step2.body': '正常时始终走延迟最低的主通道，成本与速度兼顾。', 'failover.step3.title': '异常即刻切换', 'failover.step3.body': '429 / 超时 / 5xx 触发回退，下一个热备渠道顶上。', 'failover.step4.title': '流式无感续传', 'failover.step4.body': 'SSE 长连接保持输出，调用方看到的只是一次正常响应。', 'failover.config': '分组配置示例 — claude-max',
+        'price.kicker': 'PRICE PROOF / NO HIDDEN MATH', 'price.title': '和官方比比价', 'price.body': '只选 3 个代表模型，按同一型号和单位对齐官方价与本站充值价。', 'price.full': '查看精选比价与实时目录', 'price.view': '查看价格目录', 'price.disclaimer': 'USD / 1M tokens，数据核对于 2026-08-26。价格会变化，实际扣费以官网模型广场与控制台使用日志为准。',
+        'price.table.model': '模型', 'price.table.official': '官方输入价 / 1M', 'price.table.best': '本站充值价 / 1M', 'price.table.ratio': '价格比例', 'price.table.save': '节省',
+        'quickstart.kicker': '三步拿到钥匙', 'quickstart.title': '三步完成接入。', 'quickstart.step1.title': '创建 API Key', 'quickstart.step1.body': '注册后在控制台生成 Key，不需要分别维护多个模型厂商账号。', 'quickstart.step2.title': '改一行 base_url', 'quickstart.step2.body': 'OpenAI SDK 使用 api.supertoken.cc/v1，Claude Code 通常使用不带 /v1 的地址。', 'quickstart.step3.title': '核对用量', 'quickstart.step3.body': '控制台按模型、项目和成员统计费用，实际扣费以使用日志为准。', 'quickstart.clients': '官方文档已覆盖的工具',
+        'faq.title': '常见问题', 'faq.intro': '没覆盖到的问题，直接查看官方文档或帮助中心。', 'faq.q1': '需要先注册 OpenAI、Anthropic 或 Google 的账号吗？', 'faq.a1': '不需要分别维护厂商账号。注册 SuperToken、创建 API Key 后，按官网模型广场当前开放范围调用。', 'faq.q2': 'Base URL 应该填什么？', 'faq.a2': 'Claude Code、CC-Switch 通常使用 https://api.supertoken.cc；Codex、Cursor 和 OpenAI SDK 通常使用 https://api.supertoken.cc/v1。香港节点把域名换成 hk.supertoken.cc。', 'faq.q3': '分组应该怎么选？', 'faq.a3': '官方文档建议：Claude 完整体验选 Max，侧重性价比选 Kiro；GPT、Gemini 和图片模型使用各自对应分组。最新分组以官网模型广场为准。', 'faq.q4': '价格会变动吗？', 'faq.a4': '会。最新可用模型与价格以官网模型广场和控制台实际展示为准，使用日志是实际扣费依据。', 'faq.q5': '调用出问题去哪里查？', 'faq.a5': '接入与错误码请查 docs.supertoken.cc；账户、充值和线路问题通过官方帮助中心或客服处理。',
+        'cta.title': '先充一点，跑通再说。', 'cta.body': '创建 Key、改一行 base_url，几分钟就能发出第一个请求。觉得好用再续。',
+        'footer.pricing': '价格目录', 'footer.status': '服务状态', 'footer.docs': '文档中心', 'footer.privacy': '隐私政策', 'footer.terms': '服务条款', 'footer.contact': '联系支持', 'footer.wechat': '微信客服', 'footer.twitter': 'Twitter', 'footer.copy': '复制', 'footer.legal': '使用本服务时请遵守《生成式人工智能服务管理暂行办法》及相关适用法律法规，不得利用大模型生成或传播违法违规内容。'
+    },
+    en: {
+        'nav.home': 'Home', 'nav.models': 'Model plaza', 'nav.pricing': 'Pricing', 'nav.docs': 'Docs', 'nav.statusLink': 'Status', 'nav.advantages': 'Advantages', 'nav.failover': 'Failover', 'nav.quickstart': 'Quick start', 'nav.faq': 'FAQ',
+        'nav.status': 'Route status', 'nav.apiKey': 'Console',
+        'hero.title': 'Claude, GPT, Gemini,<br/>one API for all.',
+        'hero.description': 'One key for GPT, Claude, Gemini, image, and video models through OpenAI-compatible and Anthropic-compatible APIs.',
+        'hero.copy': 'Copy', 'hero.start': 'Start integrating', 'hero.compatOpenAI': '✓ OpenAI compatible', 'hero.compatAnthropic': '✓ Anthropic compatible', 'hero.balance': '✓ Image and video APIs',
+        'terminal.curl': 'cURL', 'terminal.python': 'Python', 'terminal.node': 'Node.js', 'terminal.claude': 'Claude Code', 'terminal.ttft': 'TTFT', 'terminal.throughput': 'Throughput', 'terminal.tokens': 'Tokens this call', 'terminal.cost': 'Actual cost', 'terminal.failover': 'Upstream 429 → hot standby', 'terminal.failoverTime': '0ms handoff',
+        'ticker.label': 'Selected pricing · Official vs SuperToken',
+        'models.kicker': 'MODEL PLAZA', 'models.title': 'Leading models at a glance', 'models.online': '81 models on official catalog', 'models.foot': 'Representative models only. Check the official model plaza for live availability and pricing.', 'models.tag.reasoning': 'Reasoning', 'models.tag.general': 'General', 'models.tag.multimodal': 'Multimodal', 'models.tag.realtime': 'Realtime', 'models.tag.image': 'Image', 'models.tag.video': 'Video',
+        'advantages.kicker': 'WHY SUPERTOKEN', 'advantages.title': 'Our advantages', 'advantages.body': 'Maintain one less integration layer and keep your budget focused on the product that ships.',
+        'value.one.kicker': '01 · ONE ROUTE', 'value.one.title': 'Connect once, swap models freely', 'value.one.body': 'OpenAI and native Anthropic protocols are supported. Change one model string and leave the rest of your code alone.',
+        'value.two.kicker': '02 · TEAM CONTROL', 'value.two.title': 'Separate keys, permissions, and quotas', 'value.two.body': 'Issue independent API keys to members and assign permissions and quotas for each use case.',
+        'value.three.kicker': '03 · COST REPORTING', 'value.three.title': 'Track spend by model, project, and member', 'value.three.body': 'Use centralized reporting for budgeting, usage reviews, and team audits.',
+        'failover.kicker': 'ORDERED FALLBACK · FAILOVER GROUPS', 'failover.title': 'When the primary fails, the standby takes over.', 'failover.body': 'Put multiple channels in one group and order them by priority. A 429 or timeout moves this request to the next channel while the client still sees one normal response.',
+        'failover.step1.title': 'Request enters a group', 'failover.step1.body': 'After auth checks, the gateway selects the highest-priority channel.', 'failover.step2.title': 'Primary route first', 'failover.step2.body': 'Normal traffic stays on the lowest-latency route for the right speed and cost.', 'failover.step3.title': 'Switch on error', 'failover.step3.body': '429 / timeout / 5xx triggers the next hot standby channel.', 'failover.step4.title': 'Stream without interruption', 'failover.step4.body': 'The SSE connection keeps streaming; callers see one normal response.', 'failover.config': 'Group config example — claude-max',
+        'price.kicker': 'PRICE PROOF / NO HIDDEN MATH', 'price.title': 'Compare with official pricing', 'price.body': 'Three representative models, aligned by the same model and billing unit.', 'price.full': 'See selected comparisons and live pricing', 'price.view': 'View pricing', 'price.disclaimer': 'USD / 1M tokens, verified on 2026-08-26. Prices can change; the official model plaza and console usage logs are the source of truth.',
+        'price.table.model': 'Model', 'price.table.official': 'Official input / 1M', 'price.table.best': 'Recharge price / 1M', 'price.table.ratio': 'Price ratio', 'price.table.save': 'Save',
+        'quickstart.kicker': 'THREE STEPS TO YOUR KEY', 'quickstart.title': 'Integrate in three steps.', 'quickstart.step1.title': 'Create an API key', 'quickstart.step1.body': 'Create a key in the console instead of maintaining separate provider accounts.', 'quickstart.step2.title': 'Change one base_url line', 'quickstart.step2.body': 'Use api.supertoken.cc/v1 for OpenAI clients and the URL without /v1 for Claude Code in most setups.', 'quickstart.step3.title': 'Check your usage', 'quickstart.step3.body': 'The console reports spend by model, project, and member; usage logs are the billing source of truth.', 'quickstart.clients': 'TOOLS COVERED BY OFFICIAL DOCS',
+        'faq.title': 'Frequently asked questions', 'faq.intro': 'Check the official docs or help center for anything not covered here.', 'faq.q1': 'Do I need separate provider accounts?', 'faq.a1': 'No. Create a SuperToken account and API key, then use models currently available in the official catalog.', 'faq.q2': 'Which Base URL should I use?', 'faq.a2': 'Claude Code and CC-Switch usually use https://api.supertoken.cc. Codex, Cursor, and OpenAI SDK usually use https://api.supertoken.cc/v1. Use hk.supertoken.cc for the Hong Kong node.', 'faq.q3': 'Which route group should I choose?', 'faq.a3': 'Official docs recommend Max for the fuller Claude experience and Kiro for value. GPT, Gemini, and image models use their matching groups.', 'faq.q4': 'Can prices change?', 'faq.a4': 'Yes. Current availability and prices are published in the official model plaza and console; usage logs are the billing source of truth.', 'faq.q5': 'Where do I check an issue?', 'faq.a5': 'Use docs.supertoken.cc for integration and error codes, and the official help center for account, billing, and route issues.',
+        'cta.title': 'Add a little credit and ship.', 'cta.body': 'Create a key, change one base_url line, and send your first request in minutes. Top up again when it works for you.',
+        'footer.pricing': 'Pricing', 'footer.status': 'Service status', 'footer.docs': 'Docs', 'footer.privacy': 'Privacy', 'footer.terms': 'Terms', 'footer.contact': 'Support', 'footer.wechat': 'WeChat', 'footer.twitter': 'Twitter', 'footer.copy': 'Copy', 'footer.legal': 'Use this service in accordance with applicable laws and regulations. Do not use language models to generate or distribute illegal content.'
+    }
+};
+
+function currentLanguage() {
+    return document.documentElement.getAttribute('data-lang') === 'en' ? 'en' : 'zh';
+}
+
+function applyLanguage(lang) {
+    const next = lang === 'en' ? 'en' : 'zh';
+    const copy = COPY[next];
+    document.documentElement.setAttribute('data-lang', next);
+    document.documentElement.lang = next === 'en' ? 'en' : 'zh-CN';
+    localStorage.setItem('st-lang', next);
+    document.querySelectorAll('[data-i18n]').forEach(el => {
+        const value = copy[el.dataset.i18n];
+        if (value == null) return;
+        if (el.dataset.i18nHtml === 'true') el.innerHTML = value;
+        else el.textContent = value;
+    });
+    document.getElementById('lang-zh').classList.toggle('active', next === 'zh');
+    document.getElementById('lang-en').classList.toggle('active', next === 'en');
+    document.getElementById('lang-zh').setAttribute('aria-pressed', next === 'zh');
+    document.getElementById('lang-en').setAttribute('aria-pressed', next === 'en');
+    document.title = next === 'en' ? 'SuperToken — One endpoint for every leading model' : 'SuperToken — 一个入口，调用全部主流大模型';
+    document.querySelector('meta[name="description"]').setAttribute('content', next === 'en' ? 'SuperToken provides OpenAI-compatible, Anthropic-compatible, image, and video APIs through one AI gateway.' : 'SuperToken 提供兼容 OpenAI、Anthropic、图片生成和视频生成的统一 AI 网关。');
+    renderTicker();
+    renderTeaser();
+}
+
+/* ---------- price data (single source for ticker + teaser) ---------- */
+const PRICES = [
+    { model: 'claude-opus-5',   vendor: 'Anthropic', logo: 'https://api.iconify.design/logos:anthropic-icon.svg', officialIn: 5.000, bestIn: 0.571, ratio: 0.1142 },
+    { model: 'gpt-5.6-sol',      vendor: 'OpenAI',    logo: 'https://api.iconify.design/logos:openai-icon.svg', officialIn: 4.000, bestIn: 0.429, ratio: 0.1073 },
+    { model: 'gemini-3.7-flash', vendor: 'Google',    logo: 'https://api.iconify.design/simple-icons:googlegemini.svg?color=%234285F4', officialIn: 0.750, bestIn: 0.268, ratio: 0.3573 },
+];
+
+function fmt(n) { return '$' + (n < 1 ? n.toFixed(3) : n.toFixed(2)); }
+
+/* ---------- ticker ---------- */
+function renderTicker() {
+    const half = PRICES.map(p => {
+        const save = Math.round((1 - p.ratio) * 100);
+        return `<span class="inline-flex items-center gap-2 px-6 whitespace-nowrap">
+            <span style="color:var(--heading);">${p.model}</span>
+            <span style="color:var(--muted);">${fmt(p.officialIn)}</span>
+            <span aria-hidden="true" style="color:var(--muted);">→</span>
+            <span style="color:var(--accent); font-weight:600;">${fmt(p.bestIn)}</span>
+            <span style="color:var(--save);">-${save}%</span>
+        </span>`;
+    }).join('');
+    document.getElementById('price-ticker').innerHTML = half + half; // duplicate for seamless loop
+}
+
+/* ---------- teaser table ---------- */
+function renderTeaser() {
+    const savePrefix = currentLanguage() === 'en' ? 'Save ' : '省 ';
+    document.getElementById('teaser-body').innerHTML = PRICES.map(p => `
+        <tr class="border-t" style="border-color: var(--line);">
+            <td class="px-5 py-3.5">
+                <span class="model-cell">
+                    <span class="model-mark"><img src="${p.logo}" alt="" loading="lazy"></span>
+                    <span class="heading-c font-semibold">${p.model}</span>
+                    <span class="vendor-pill">${p.vendor}</span>
+                </span>
+            </td>
+            <td class="px-5 py-3.5 text-right muted-c line-through decoration-[var(--muted)]">${fmt(p.officialIn)}</td>
+            <td class="px-5 py-3.5 text-right price-current">${fmt(p.bestIn)}</td>
+            <td class="px-5 py-3.5 text-right"><span class="ratio-pill">${p.ratio.toFixed(3)}x</span></td>
+            <td class="px-5 py-3.5 text-right"><span class="saving-pill">${savePrefix}${Math.round((1 - p.ratio) * 100)}%</span></td>
+        </tr>`).join('');
+}
+
+document.getElementById('lang-zh').addEventListener('click', () => applyLanguage('zh'));
+document.getElementById('lang-en').addEventListener('click', () => applyLanguage('en'));
+applyLanguage(document.documentElement.getAttribute('data-lang') || 'zh');
+
+/* ---------- code tabs ---------- */
+function switchTab(id) {
+    document.querySelectorAll('.ctab-btn').forEach(b => b.classList.toggle('active', b.dataset.tab === id));
+    document.querySelectorAll('.ctab-pane').forEach(p => p.classList.remove('active'));
+    document.getElementById('ctab-' + id).classList.add('active');
+}
+
+/* ---------- copy endpoint ---------- */
+document.getElementById('copy-endpoint').addEventListener('click', function () {
+    navigator.clipboard.writeText('https://api.supertoken.cc/v1').then(() => {
+        const label = document.getElementById('copy-endpoint-label');
+        label.textContent = currentLanguage() === 'en' ? 'Copied ✓' : '已复制 ✓';
+        label.style.color = 'var(--save)';
+        setTimeout(() => { label.textContent = currentLanguage() === 'en' ? 'Copy' : '复制'; label.style.color = ''; }, 1800);
+    });
+});
+
+document.querySelectorAll('.contact-copy').forEach(button => {
+    button.addEventListener('click', () => {
+        navigator.clipboard.writeText(button.dataset.contactValue).then(() => {
+            const label = button.querySelector('[data-contact-copy-label]');
+            label.textContent = currentLanguage() === 'en' ? 'Copied' : '已复制';
+            label.style.color = 'var(--save)';
+            setTimeout(() => {
+                label.textContent = currentLanguage() === 'en' ? 'Copy' : '复制';
+                label.style.color = '';
+            }, 1800);
+        });
+    });
+});
+
+/* ---------- scroll reveal ---------- */
+const io = new IntersectionObserver(entries => {
+    entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } });
+}, { threshold: 0.08, rootMargin: '0px 0px 220px 0px' });
+document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+
+/* ---------- mobile navigation ---------- */
+const navMenu = document.getElementById('nav-menu');
+const mobileNav = document.getElementById('mobile-nav');
+navMenu.addEventListener('click', () => {
+    const open = mobileNav.classList.toggle('open');
+    navMenu.setAttribute('aria-expanded', String(open));
+    navMenu.querySelector('span').innerHTML = `<i data-lucide="${open ? 'x' : 'menu'}"></i>`;
+    window.lucide?.createIcons({ attrs: { 'stroke-width': 1.8 } });
+});
+window.addEventListener('DOMContentLoaded', () => window.lucide?.createIcons({ attrs: { 'stroke-width': 1.8 } }));
+</script>
+</body>
+</html>

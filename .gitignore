@@ -1,0 +1,13 @@
+node_modules/
+dist/
+.DS_Store
+*.log
+supertoken-site-*.zip
+supertoken-site-*/
+CLAUDE.md
+index-light_raw.html
+index-v2.html
+index_raw.html
+pricing-light_raw.html
+pricing-v2.html
+pricing_raw.html

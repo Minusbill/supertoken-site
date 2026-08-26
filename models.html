@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="dark" data-lang="zh" data-page="models">
+<head>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <title>模型广场 - SuperToken</title>
+    <meta name="description" content="浏览 SuperToken 当前公开的 GPT-5.6 Sol、Claude 5、Gemini 3.7 以及图片和视频模型。"/>
+    <script>(function(){const t=localStorage.getItem('st-theme')||'dark';const l=localStorage.getItem('st-lang')||'zh';document.documentElement.dataset.theme=t;document.documentElement.dataset.lang=l;document.documentElement.classList.add(t);})();</script>
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+    <link href="site.css" rel="stylesheet"/>
+    <script src="https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js" defer></script>
+    <script src="site.js" type="module"></script>
+</head>
+<body class="site-body">
+    <div id="site-nav-mount"></div>
+    <main class="st-page">
+        <header class="st-page-hero">
+            <div class="st-wrap">
+                <span class="st-eyebrow">MODEL PLAZA / CAPABILITY FIRST</span>
+                <h1 class="st-page-title" data-copy-zh="先选能力，再决定走哪条线路。" data-copy-en="Choose capabilities before choosing a route.">先选能力，再决定走哪条线路。</h1>
+                <p class="st-page-lead" data-copy-zh="从文本模型到图片与视频生成，按厂商和任务类型查找代表型号；实时价格与完整目录由官网模型广场提供。" data-copy-en="Browse representative text, image, and video models by provider and task. The official model plaza remains the source for the complete live catalog and pricing.">从文本模型到图片与视频生成，按厂商和任务类型查找代表型号；实时价格与完整目录由官网模型广场提供。</p>
+            </div>
+        </header>
+
+        <section class="st-section">
+            <div class="st-wrap">
+                <div class="st-notice" style="margin-bottom:18px"><i data-lucide="info"></i><span data-copy-zh="截至 2026-08-26，官网模型广场公开 81 个模型。下方只展示代表型号；完整可用范围、分组和实时价格以官网目录为准。" data-copy-en="As of August 26, 2026, the official catalog lists 81 models. The selection below is representative; use the live catalog for current availability, route groups, and pricing.">截至 2026-08-26，官网模型广场公开 81 个模型。下方只展示代表型号；完整可用范围、分组和实时价格以官网目录为准。</span></div>
+                <div class="st-toolbar">
+                    <div class="st-search"><i data-lucide="search"></i><input id="model-search" type="search" placeholder="搜索模型、ID 或能力" data-placeholder-zh="搜索模型、ID 或能力" data-placeholder-en="Search models, IDs, or capabilities" aria-label="搜索模型"/></div>
+                    <div class="st-filter-set" id="category-filters" aria-label="任务类型筛选">
+                        <button class="st-filter active" data-category="all" data-copy-zh="全部代表型号" data-copy-en="All selected">全部代表型号</button><button class="st-filter" data-category="text" data-copy-zh="文本与推理" data-copy-en="Text & reasoning">文本与推理</button><button class="st-filter" data-category="image" data-copy-zh="图片生成" data-copy-en="Image generation">图片生成</button><button class="st-filter" data-category="video" data-copy-zh="视频生成" data-copy-en="Video generation">视频生成</button>
+                    </div>
+                </div>
+
+                <div class="st-model-grid" id="model-grid">
+                    <article class="st-model-card" data-category="text" data-search="claude opus 5 anthropic 旗舰 推理 claude-opus-5">
+                        <div class="st-model-top"><div class="st-model-identity"><span class="st-logo-box"><img src="https://api.iconify.design/logos:anthropic-icon.svg" alt="Anthropic"/></span><span class="st-model-name"><strong>Claude Opus 5</strong><span>Anthropic · claude-opus-5</span></span></div><span class="st-model-type" data-copy-zh="旗舰推理" data-copy-en="Frontier reasoning">旗舰推理</span></div>
+                        <p class="st-model-description" data-copy-zh="Claude 5 系列的高性能型号，目录同时开放 Anthropic 与 OpenAI 兼容入口。" data-copy-en="The high-performance Claude 5 model, available through Anthropic and OpenAI-compatible endpoints.">Claude 5 系列的高性能型号，目录同时开放 Anthropic 与 OpenAI 兼容入口。</p><div class="st-tags"><span class="st-tag">Anthropic API</span><span class="st-tag">OpenAI compatible</span><span class="st-tag">Claude Max</span></div><a class="st-model-link" href="https://supertoken.cc/pricing"><span data-copy-zh="查看官网实时价格" data-copy-en="View live pricing">查看官网实时价格</span> <i data-lucide="arrow-right"></i></a>
+                    </article>
+                    <article class="st-model-card" data-category="text" data-search="claude fable 5 anthropic 长任务 agent claude-fable-5">
+                        <div class="st-model-top"><div class="st-model-identity"><span class="st-logo-box"><img src="https://api.iconify.design/logos:anthropic-icon.svg" alt="Anthropic"/></span><span class="st-model-name"><strong>Claude Fable 5</strong><span>Anthropic · claude-fable-5</span></span></div><span class="st-model-type" data-copy-zh="长程任务" data-copy-en="Long-horizon tasks">长程任务</span></div>
+                        <p class="st-model-description" data-copy-zh="面向复杂代理与长程任务的 Claude 5 型号，当前目录开放 Claude Max 分组。" data-copy-en="A Claude 5 model for complex agents and long-horizon work, currently available through the Claude Max route group.">面向复杂代理与长程任务的 Claude 5 型号，当前目录开放 Claude Max 分组。</p><div class="st-tags"><span class="st-tag">Anthropic API</span><span class="st-tag">Agents</span><span class="st-tag">Claude Max</span></div><a class="st-model-link" href="https://supertoken.cc/pricing"><span data-copy-zh="查看官网实时价格" data-copy-en="View live pricing">查看官网实时价格</span> <i data-lucide="arrow-right"></i></a>
+                    </article>
+                    <article class="st-model-card" data-category="text" data-search="gpt 5.6 sol openai coding 旗舰 gpt-5.6-sol">
+                        <div class="st-model-top"><div class="st-model-identity"><span class="st-logo-box"><img src="https://api.iconify.design/logos:openai-icon.svg" alt="OpenAI"/></span><span class="st-model-name"><strong>GPT-5.6 Sol</strong><span>OpenAI · gpt-5.6-sol</span></span></div><span class="st-model-type" data-copy-zh="旗舰编程" data-copy-en="Frontier coding">旗舰编程</span></div>
+                        <p class="st-model-description" data-copy-zh="GPT-5.6 系列旗舰型号，当前通过 GPT Official 分组和 OpenAI 兼容入口调用。" data-copy-en="The flagship GPT-5.6 model, served through the GPT Official group and OpenAI-compatible endpoint.">GPT-5.6 系列旗舰型号，当前通过 GPT Official 分组和 OpenAI 兼容入口调用。</p><div class="st-tags"><span class="st-tag">OpenAI API</span><span class="st-tag">Coding</span><span class="st-tag">GPT Official</span></div><a class="st-model-link" href="https://supertoken.cc/pricing"><span data-copy-zh="查看官网实时价格" data-copy-en="View live pricing">查看官网实时价格</span> <i data-lucide="arrow-right"></i></a>
+                    </article>
+                    <article class="st-model-card" data-category="text" data-search="gemini 3.7 flash google 多模态 推理 gemini-3.7-flash">
+                        <div class="st-model-top"><div class="st-model-identity"><span class="st-logo-box"><img src="https://api.iconify.design/simple-icons:googlegemini.svg?color=%234285F4" alt="Google Gemini"/></span><span class="st-model-name"><strong>Gemini 3.7 Flash</strong><span>Google · gemini-3.7-flash</span></span></div><span class="st-model-type" data-copy-zh="多模态推理" data-copy-en="Multimodal reasoning">多模态推理</span></div>
+                        <p class="st-model-description" data-copy-zh="Google 当前的高能力 Flash 型号，支持 Gemini 原生与 OpenAI 兼容入口。" data-copy-en="Google's current high-capability Flash model, available through native Gemini and OpenAI-compatible endpoints.">Google 当前的高能力 Flash 型号，支持 Gemini 原生与 OpenAI 兼容入口。</p><div class="st-tags"><span class="st-tag">Gemini API</span><span class="st-tag">Multimodal</span><span class="st-tag">Gemini Official</span></div><a class="st-model-link" href="https://supertoken.cc/pricing"><span data-copy-zh="查看官网实时价格" data-copy-en="View live pricing">查看官网实时价格</span> <i data-lucide="arrow-right"></i></a>
+                    </article>
+                    <article class="st-model-card" data-category="image" data-search="gpt image 2 openai 图片 生图 gpt-image-2 image2">
+                        <div class="st-model-top"><div class="st-model-identity"><span class="st-logo-box"><img src="https://api.iconify.design/logos:openai-icon.svg" alt="OpenAI"/></span><span class="st-model-name"><strong>GPT Image 2</strong><span>OpenAI · gpt-image-2</span></span></div><span class="st-model-type" data-copy-zh="图片生成" data-copy-en="Image generation">图片生成</span></div>
+                        <p class="st-model-description" data-copy-zh="支持图片生成接口；官网目录同时提供按量和按次线路，具体参数与价格以实时目录为准。" data-copy-en="Available through the image-generation endpoint with usage-based and per-request routes in the live catalog.">支持图片生成接口；官网目录同时提供按量和按次线路，具体参数与价格以实时目录为准。</p><div class="st-tags"><span class="st-tag">Image API</span><span class="st-tag">OpenAI compatible</span><span class="st-tag">GPT Image 2</span></div><a class="st-model-link" href="https://supertoken.cc/pricing"><span data-copy-zh="查看官网实时价格" data-copy-en="View live pricing">查看官网实时价格</span> <i data-lucide="arrow-right"></i></a>
+                    </article>
+                    <article class="st-model-card" data-category="image" data-search="nano banana 小香蕉 gemini 3.1 flash image google gemini-3.1-flash-image">
+                        <div class="st-model-top"><div class="st-model-identity"><span class="st-logo-box"><img src="https://api.iconify.design/simple-icons:googlegemini.svg?color=%234285F4" alt="Google Gemini"/></span><span class="st-model-name"><strong>Nano Banana</strong><span>Google · gemini-3.1-flash-image</span></span></div><span class="st-model-type" data-copy-zh="快速生图" data-copy-en="Fast image generation">快速生图</span></div>
+                        <p class="st-model-description" data-copy-zh="“小香蕉”是官网分组昵称；调用时应使用上方真实模型 ID，而不是 Banana 字样。" data-copy-en="“Nano Banana” is the catalog's route nickname. Use the API model ID shown above, not the Banana nickname.">“小香蕉”是官网分组昵称；调用时应使用上方真实模型 ID，而不是 Banana 字样。</p><div class="st-tags"><span class="st-tag">Image API</span><span class="st-tag">Gemini</span><span class="st-tag">gemini-image-flash</span></div><a class="st-model-link" href="https://supertoken.cc/pricing"><span data-copy-zh="查看官网实时价格" data-copy-en="View live pricing">查看官网实时价格</span> <i data-lucide="arrow-right"></i></a>
+                    </article>
+                    <article class="st-model-card" data-category="image" data-search="nano banana pro 大香蕉 gemini 3 pro image google gemini-3-pro-image">
+                        <div class="st-model-top"><div class="st-model-identity"><span class="st-logo-box"><img src="https://api.iconify.design/simple-icons:googlegemini.svg?color=%234285F4" alt="Google Gemini"/></span><span class="st-model-name"><strong>Nano Banana Pro</strong><span>Google · gemini-3-pro-image</span></span></div><span class="st-model-type" data-copy-zh="高质量生图" data-copy-en="High-quality images">高质量生图</span></div>
+                        <p class="st-model-description" data-copy-zh="“大香蕉”对应官网高质量 Gemini 图片线路，支持图片生成、Gemini 与 OpenAI 兼容入口。" data-copy-en="The catalog's high-quality Gemini image route, available through image, Gemini, and OpenAI-compatible endpoints.">“大香蕉”对应官网高质量 Gemini 图片线路，支持图片生成、Gemini 与 OpenAI 兼容入口。</p><div class="st-tags"><span class="st-tag">Image API</span><span class="st-tag">Gemini</span><span class="st-tag">gemini-image-pro</span></div><a class="st-model-link" href="https://supertoken.cc/pricing"><span data-copy-zh="查看官网实时价格" data-copy-en="View live pricing">查看官网实时价格</span> <i data-lucide="arrow-right"></i></a>
+                    </article>
+                    <article class="st-model-card" data-category="video" data-search="seedance 2.0 fast 720p 即梦 bytedance 视频 seedance-2.0-fast-720p">
+                        <div class="st-model-top"><div class="st-model-identity"><span class="st-logo-box"><img src="https://api.iconify.design/simple-icons:bytedance.svg?color=%23000000" alt="ByteDance"/></span><span class="st-model-name"><strong>Seedance 2.0 Fast</strong><span>ByteDance · seedance-2.0-fast-720p</span></span></div><span class="st-model-type" data-copy-zh="视频生成" data-copy-en="Video generation">视频生成</span></div>
+                        <p class="st-model-description" data-copy-zh="720p 快速视频型号，通过统一视频任务接口调用，目录当前按生成秒数计费。" data-copy-en="A fast 720p video model served through the unified video-task endpoint and currently billed per generated second.">720p 快速视频型号，通过统一视频任务接口调用，目录当前按生成秒数计费。</p><div class="st-tags"><span class="st-tag">Video API</span><span class="st-tag">720p</span><span class="st-tag">Per second</span></div><a class="st-model-link" href="https://supertoken.cc/pricing"><span data-copy-zh="查看官网实时价格" data-copy-en="View live pricing">查看官网实时价格</span> <i data-lucide="arrow-right"></i></a>
+                    </article>
+                    <article class="st-model-card" data-category="video" data-search="grok imagine video 1.5 preview 720p xai 视频 grok-imagine-video-1.5-preview-720p">
+                        <div class="st-model-top"><div class="st-model-identity"><span class="st-logo-box"><img src="https://api.iconify.design/logos:grok-icon.svg" alt="xAI Grok"/></span><span class="st-model-name"><strong>Grok Imagine Video 1.5</strong><span>xAI · grok-imagine-video-1.5-preview-720p</span></span></div><span class="st-model-type" data-copy-zh="视频生成" data-copy-en="Video generation">视频生成</span></div>
+                        <p class="st-model-description" data-copy-zh="xAI 的 720p 视频预览型号，支持统一视频任务接口，并按生成秒数计费。" data-copy-en="xAI's 720p preview video model, available through the unified video-task endpoint and billed per generated second.">xAI 的 720p 视频预览型号，支持统一视频任务接口，并按生成秒数计费。</p><div class="st-tags"><span class="st-tag">Video API</span><span class="st-tag">720p</span><span class="st-tag">xAI</span></div><a class="st-model-link" href="https://supertoken.cc/pricing"><span data-copy-zh="查看官网实时价格" data-copy-en="View live pricing">查看官网实时价格</span> <i data-lucide="arrow-right"></i></a>
+                    </article>
+                </div>
+                <p id="model-empty" class="st-muted" hidden style="padding:36px 0;text-align:center;font-size:13px" data-copy-zh="没有匹配的模型。" data-copy-en="No matching models.">没有匹配的模型。</p>
+            </div>
+        </section>
+    </main>
+    <div id="site-footer-mount"></div>
+    <script>
+        const cards = [...document.querySelectorAll('.st-model-card')];
+        const filters = [...document.querySelectorAll('.st-filter')];
+        const search = document.getElementById('model-search');
+        let category = 'all';
+        function filterModels() {
+            const query = search.value.trim().toLowerCase();
+            let visible = 0;
+            cards.forEach(card => {
+                const matchCategory = category === 'all' || card.dataset.category === category;
+                const matchQuery = !query || card.dataset.search.toLowerCase().includes(query);
+                card.hidden = !(matchCategory && matchQuery);
+                if (!card.hidden) visible += 1;
+            });
+            document.getElementById('model-empty').hidden = visible !== 0;
+        }
+        filters.forEach(button => button.addEventListener('click', () => {
+            category = button.dataset.category;
+            filters.forEach(item => item.classList.toggle('active', item === button));
+            filterModels();
+        }));
+        search.addEventListener('input', filterModels);
+    </script>
+</body>
+</html>

@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="dark" data-lang="zh" data-page="status">
+<head>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <title>服务状态 - SuperToken</title>
+    <meta name="description" content="SuperToken 网关、模型线路和控制台服务状态页面。"/>
+    <script>(function(){const t=localStorage.getItem('st-theme')||'dark';const l=localStorage.getItem('st-lang')||'zh';document.documentElement.dataset.theme=t;document.documentElement.dataset.lang=l;document.documentElement.classList.add(t);})();</script>
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+    <link href="site.css" rel="stylesheet"/>
+    <script src="https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js" defer></script>
+    <script src="site.js" type="module"></script>
+</head>
+<body class="site-body">
+    <div id="site-nav-mount"></div>
+    <main class="st-page">
+        <header class="st-page-hero"><div class="st-wrap"><span class="st-eyebrow">SYSTEM STATUS / OBSERVABILITY</span><h1 class="st-page-title" data-copy-zh="每条线路，状态说清楚。" data-copy-en="Clear status for every route.">每条线路，状态说清楚。</h1><p class="st-page-lead" data-copy-zh="网关、控制台和模型上游分开监控，故障与维护事件按时间记录。" data-copy-en="Gateway, console, and upstream routes are monitored independently with incident and maintenance history.">网关、控制台和模型上游分开监控，故障与维护事件按时间记录。</p></div></header>
+        <section class="st-section"><div class="st-wrap">
+            <div class="st-notice" style="margin-bottom:18px"><i data-lucide="plug-zap"></i><span>监控 API 尚未接入。本页当前展示正式界面结构，不代表实时线路状态；接入后应由监控数据驱动，不能使用前端写死的“全部正常”。</span></div>
+            <div class="st-status-summary">
+                <div><div class="st-status-label">当前结论</div><div class="st-status-value pending">等待监控数据</div></div>
+                <div><div class="st-status-label">24H 可用率</div><div class="st-status-value pending">--</div></div>
+                <div><div class="st-status-label">P95 延迟</div><div class="st-status-value pending">-- ms</div></div>
+                <div><div class="st-status-label">最后更新</div><div class="st-status-value pending" style="font-size:14px">未连接</div></div>
+            </div>
+        </div></section>
+        <section class="st-section"><div class="st-wrap"><div class="st-section-head"><div><span class="st-eyebrow">SERVICES</span><h2 class="st-section-title">服务组件</h2><p class="st-section-copy">每个组件独立展示最近 24 个时间窗口，接入监控后按成功率与延迟着色。</p></div></div>
+            <div class="st-service-list">
+                <div class="st-service-row"><div class="st-service-name">API Gateway<span>api.supertoken.cc</span></div><div class="st-bars" aria-label="等待监控数据"></div><div class="st-service-state">未连接</div></div>
+                <div class="st-service-row"><div class="st-service-name">Anthropic Routes<span>Claude 模型线路</span></div><div class="st-bars" aria-label="等待监控数据"></div><div class="st-service-state">未连接</div></div>
+                <div class="st-service-row"><div class="st-service-name">OpenAI Routes<span>GPT / Codex 模型线路</span></div><div class="st-bars" aria-label="等待监控数据"></div><div class="st-service-state">未连接</div></div>
+                <div class="st-service-row"><div class="st-service-name">Image &amp; Video Routes<span>图片与视频生成线路</span></div><div class="st-bars" aria-label="等待监控数据"></div><div class="st-service-state">未连接</div></div>
+                <div class="st-service-row"><div class="st-service-name">Google / xAI Routes<span>Gemini 与 Grok 模型线路</span></div><div class="st-bars" aria-label="等待监控数据"></div><div class="st-service-state">未连接</div></div>
+                <div class="st-service-row"><div class="st-service-name">Console & Billing<span>控制台与账单服务</span></div><div class="st-bars" aria-label="等待监控数据"></div><div class="st-service-state">未连接</div></div>
+            </div>
+        </div></section>
+        <section class="st-section"><div class="st-wrap"><div class="st-section-head"><div><span class="st-eyebrow">INCIDENTS</span><h2 class="st-section-title">事件记录</h2><p class="st-section-copy">暂无可验证的监控事件数据。</p></div></div><div style="padding:28px;border-top:1px solid var(--line);border-bottom:1px solid var(--line);text-align:center;color:var(--muted);font-size:12px">接入监控 API 后显示故障、恢复与计划维护记录。</div></div></section>
+    </main>
+    <div id="site-footer-mount"></div>
+</body>
+</html>
