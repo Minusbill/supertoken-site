@@ -1,0 +1,26 @@
+{
+  "_comment": "Example payload for status.html. Serve a real one at ./status.json (same origin) and site.js renders it; without the file the page stays in its 'not connected' state. bars: 24 entries, oldest first, each 'ok' | 'warn' | 'down' | 'none'.",
+  "updatedAt": "2026-08-31 17:42",
+  "overall": "warn",
+  "headline": "主要线路正常 · 1 条线路部分降级",
+  "summary": { "uptime24h": "99.95%", "uptime30d": "99.91%", "p95ms": 182, "activeIncidents": 1 },
+  "services": [
+    { "id": "gateway", "name": "API Gateway", "sub": "api.supertoken.cc", "uptime": "100.00%", "p95": "182 ms", "state": "ok",
+      "bars": ["ok","ok","ok","ok","ok","ok","ok","ok","ok","ok","ok","ok","ok","ok","ok","ok","ok","ok","ok","ok","ok","ok","ok","ok"] },
+    { "id": "anthropic", "name": "Anthropic Routes", "sub": "Claude 模型线路 · claude-max / kiro", "uptime": "99.92%", "p95": "640 ms", "state": "ok",
+      "bars": ["ok","ok","ok","ok","ok","ok","ok","ok","ok","warn","ok","ok","ok","ok","ok","ok","ok","ok","ok","ok","ok","ok","ok","ok"] },
+    { "id": "openai", "name": "OpenAI Routes", "sub": "GPT / Codex 模型线路", "uptime": "99.97%", "p95": "410 ms", "state": "ok",
+      "bars": ["ok","ok","ok","ok","ok","ok","ok","ok","ok","ok","ok","ok","ok","ok","ok","ok","ok","ok","ok","ok","ok","ok","ok","ok"] },
+    { "id": "google-xai", "name": "Google / xAI Routes", "sub": "Gemini 与 Grok 模型线路", "uptime": "99.88%", "p95": "520 ms", "state": "warn",
+      "bars": ["ok","ok","ok","ok","ok","ok","ok","ok","ok","ok","ok","ok","ok","ok","ok","ok","ok","ok","ok","ok","warn","warn","ok","ok"] },
+    { "id": "media", "name": "Image & Video Routes", "sub": "图片与视频生成线路", "uptime": "99.95%", "p95": "2.1 s", "state": "ok",
+      "bars": ["ok","ok","ok","down","ok","ok","ok","ok","ok","ok","ok","ok","ok","ok","ok","ok","ok","ok","ok","ok","ok","ok","ok","ok"] },
+    { "id": "console", "name": "Console & Billing", "sub": "控制台与账单服务", "uptime": "100.00%", "p95": "96 ms", "state": "ok",
+      "bars": ["ok","ok","ok","ok","ok","ok","ok","ok","ok","ok","ok","ok","ok","ok","ok","ok","ok","ok","ok","ok","ok","ok","ok","ok"] }
+  ],
+  "incidents": [
+    { "time": "08-31 14:20", "title": "Gemini 线路上游限流，部分请求延迟升高", "detail": "已将 gemini-official 分组权重下调，回退至备用渠道；P95 从 1.8 s 回落至 520 ms。", "state": "warn", "label": "监控中" },
+    { "time": "08-29 03:05", "title": "图片生成线路短暂不可用（约 11 分钟）", "detail": "上游 5xx 触发自动回退；03:16 恢复正常，受影响请求已按失败不计费处理。", "state": "ok", "label": "已恢复" },
+    { "time": "08-26 22:00", "title": "计划维护：网关节点升级", "detail": "滚动升级，无请求中断；香港节点 hk.supertoken.cc 同步完成。", "state": "", "label": "已完成" }
+  ]
+}

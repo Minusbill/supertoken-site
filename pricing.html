@@ -1,114 +1,157 @@
 <!DOCTYPE html>
-<html lang="zh-CN" data-theme="dark" data-lang="zh" data-page="pricing">
+<html lang="zh-CN" data-lang="zh" data-page="pricing" data-title-en="Pricing - SuperToken">
 <head>
     <meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1"/>
-    <title>精选价格对比 - SuperToken</title>
-    <meta name="description" content="对比 Claude Opus 5、GPT-5.6 Sol、Gemini 3.7 Flash 的厂商官方价与 SuperToken 官网充值价格。"/>
-    <script>(function(){const t=localStorage.getItem('st-theme')||'dark';const l=localStorage.getItem('st-lang')||'zh';document.documentElement.dataset.theme=t;document.documentElement.dataset.lang=l;document.documentElement.classList.add(t);})();</script>
-    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+    <title>定价 - SuperToken</title>
+    <meta name="description" content="对比 Claude Opus 5、GPT-5.6 Sol、Gemini 3.7 Flash 的厂商官方价与 SuperToken 充值价，以及图片、视频模型的按次 / 按秒价格。"/>
+    <link rel="icon" type="image/svg+xml" href="favicon.svg"/>
+    <script>(function(){try{document.documentElement.dataset.lang=localStorage.getItem('st-lang')||'zh';}catch(e){}})();</script>
+    <link rel="preconnect" href="https://fonts.googleapis.com"/>
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+    <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500..800&family=Noto+Sans+SC:wght@400;500;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet"/>
     <link href="site.css" rel="stylesheet"/>
-    <script src="https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js" defer></script>
     <script src="site.js" type="module"></script>
 </head>
-<body class="site-body">
-    <div id="site-nav-mount"></div>
-    <main class="st-page st-pricing-page">
-        <header class="st-page-hero st-pricing-hero">
-            <div class="st-wrap">
-                <span class="st-eyebrow">PRICE PROOF / SAME MODEL, SAME UNIT</span>
-                <h1 class="st-page-title st-pricing-title"><span class="st-pricing-title-line" data-copy-zh="官方价，本站价，" data-copy-en="Official pricing. ">官方价，本站价，</span><span class="st-pricing-title-line" data-copy-zh="一眼对上。" data-copy-en="SuperToken price.">一眼对上。</span></h1>
-                <p class="st-page-lead" data-copy-zh="只比较同一模型、同一币种和同一计价单位。文本、图片、视频各按自己的计费方式展示。" data-copy-en="Every comparison uses the same model, currency, and billing unit. Text, image, and video each keep their own unit.">只比较同一模型、同一币种和同一计价单位。文本、图片、视频各按自己的计费方式展示。</p>
-                <div class="st-pricing-meta" aria-label="价格核对信息">
-                    <span><i data-lucide="database"></i><b>3</b><em data-copy-zh="个文本旗舰" data-copy-en="text flagships">个文本旗舰</em></span>
-                    <span><i data-lucide="scale"></i><b>USD / 1M</b><em data-copy-zh="统一 Token 单位" data-copy-en="same token unit">统一 Token 单位</em></span>
-                    <span><i data-lucide="calendar-check"></i><b>2026-08-26</b><em data-copy-zh="公开目录核对" data-copy-en="public catalog checked">公开目录核对</em></span>
-                </div>
-            </div>
-        </header>
+<body>
+<div id="site-nav-mount"></div>
 
-        <section class="st-section st-pricing-content">
-            <div class="st-wrap">
-                <div class="st-section-head">
-                    <div>
-                        <span class="st-eyebrow">WHAT ARE YOU PRICING?</span>
-                        <h2 class="st-section-title" data-copy-zh="按任务，读对价格单位" data-copy-en="Read each task in its own unit">按任务，读对价格单位</h2>
-                    </div>
-                </div>
-
-                <div class="st-price-tabs" role="tablist" aria-label="定价类型">
-                    <button type="button" class="st-price-tab active" role="tab" aria-selected="true" data-price-view="text" data-copy-zh="文本模型" data-copy-en="Text models">文本模型</button>
-                    <button type="button" class="st-price-tab" role="tab" aria-selected="false" data-price-view="image" data-copy-zh="图片生成" data-copy-en="Image generation">图片生成</button>
-                    <button type="button" class="st-price-tab" role="tab" aria-selected="false" data-price-view="video" data-copy-zh="视频生成" data-copy-en="Video generation">视频生成</button>
-                </div>
-
-                <section class="st-pricing-panel" data-price-panel="text">
-                    <div class="st-price-panel-head">
-                        <div><h3 data-copy-zh="输入、输出，分别看清" data-copy-en="Input and output, separated">输入、输出，分别看清</h3><p data-copy-zh="厂商官方价与本站充值价，均按每百万 Token 对齐。" data-copy-en="Provider list prices and SuperToken recharge prices are aligned per million tokens.">厂商官方价与本站充值价，均按每百万 Token 对齐。</p></div>
-                        <a class="st-primary-link" href="https://supertoken.cc/pricing"><span data-copy-zh="完整实时目录" data-copy-en="Live catalog">完整实时目录</span><i data-lucide="arrow-up-right"></i></a>
-                    </div>
-
-                    <div class="st-price-table-wrap st-price-table-desktop">
-                        <table class="st-price-table st-price-table-compact">
-                            <thead><tr><th data-copy-zh="模型" data-copy-en="Model">模型</th><th data-copy-zh="厂商官方价" data-copy-en="Provider list price">厂商官方价</th><th data-copy-zh="SuperToken 充值价" data-copy-en="SuperToken recharge price">SuperToken 充值价</th><th data-copy-zh="节省" data-copy-en="Savings">节省</th><th data-copy-zh="价格依据" data-copy-en="Price proof">价格依据</th></tr></thead>
-                            <tbody>
-                                <tr><td><span class="st-price-model"><span class="st-logo-box"><img src="https://api.iconify.design/logos:anthropic-icon.svg" alt="Anthropic"/></span><span><strong>Claude Opus 5</strong><small>claude-opus-5</small></span></span></td><td><span class="st-price-pair"><span><small>IN</small>$5.000</span><span><small>OUT</small>$25.000</span></span></td><td class="st-price-best"><span class="st-price-pair st-price-current"><span><small>IN</small>$0.571</span><span><small>OUT</small>$2.857</span></span></td><td><span class="st-save-stack"><strong>89%</strong><small data-copy-zh="约 1.1 折" data-copy-en="11.4% of list">约 1.1 折</small></span></td><td><span class="st-source-links"><a href="https://platform.claude.com/docs/en/about-claude/pricing">Anthropic</a><a href="https://supertoken.cc/pricing">SuperToken</a></span></td></tr>
-                                <tr><td><span class="st-price-model"><span class="st-logo-box"><img src="https://api.iconify.design/logos:openai-icon.svg" alt="OpenAI"/></span><span><strong>GPT-5.6 Sol</strong><small>gpt-5.6-sol</small></span></span></td><td><span class="st-price-pair"><span><small>IN</small>$4.000</span><span><small>OUT</small>$20.000</span></span><small class="st-price-note" data-copy-zh="短上下文促销价" data-copy-en="Short-context promo">短上下文促销价</small></td><td class="st-price-best"><span class="st-price-pair st-price-current"><span><small>IN</small>$0.429</span><span><small>OUT</small>$2.571</span></span></td><td><span class="st-save-stack"><strong>89%</strong><small data-copy-zh="约 1.1 折" data-copy-en="10.7% of list">约 1.1 折</small></span></td><td><span class="st-source-links"><a href="https://developers.openai.com/api/docs/pricing">OpenAI</a><a href="https://supertoken.cc/pricing">SuperToken</a></span></td></tr>
-                                <tr><td><span class="st-price-model"><span class="st-logo-box"><img src="https://api.iconify.design/simple-icons:googlegemini.svg?color=%234285F4" alt="Google Gemini"/></span><span><strong>Gemini 3.7 Flash</strong><small>gemini-3.7-flash</small></span></span></td><td><span class="st-price-pair"><span><small>IN</small>$0.750</span><span><small>OUT</small>$3.750</span></span><small class="st-price-note" data-copy-zh="2026 年促销价" data-copy-en="2026 promo price">2026 年促销价</small></td><td class="st-price-best"><span class="st-price-pair st-price-current"><span><small>IN</small>$0.268</span><span><small>OUT</small>$1.339</span></span></td><td><span class="st-save-stack"><strong>64%</strong><small data-copy-zh="约 3.6 折" data-copy-en="35.7% of list">约 3.6 折</small></span></td><td><span class="st-source-links"><a href="https://ai.google.dev/gemini-api/docs/pricing">Google</a><a href="https://supertoken.cc/pricing">SuperToken</a></span></td></tr>
-                            </tbody>
-                        </table>
-                    </div>
-
-                    <div class="st-price-mobile-list" aria-label="移动端文本价格对比">
-                        <article class="st-mobile-price-card"><div class="st-mobile-price-top"><span class="st-price-model"><span class="st-logo-box"><img src="https://api.iconify.design/logos:anthropic-icon.svg" alt="Anthropic"/></span><span><strong>Claude Opus 5</strong><small>claude-opus-5</small></span></span><span class="st-save-stack"><strong><span data-copy-zh="省 " data-copy-en="Save ">省 </span>89%</strong><small data-copy-zh="约 1.1 折" data-copy-en="11.4% of list">约 1.1 折</small></span></div><div class="st-mobile-price-grid"><div><span data-copy-zh="厂商官方价 / 1M" data-copy-en="Provider list / 1M">厂商官方价 / 1M</span><b>IN $5.000</b><b>OUT $25.000</b></div><div class="st-mobile-price-current"><span data-copy-zh="SuperToken / 1M" data-copy-en="SuperToken / 1M">SuperToken / 1M</span><b>IN $0.571</b><b>OUT $2.857</b></div></div><div class="st-mobile-price-proof"><a href="https://platform.claude.com/docs/en/about-claude/pricing">Anthropic</a><span>·</span><a href="https://supertoken.cc/pricing">SuperToken</a></div></article>
-                        <article class="st-mobile-price-card"><div class="st-mobile-price-top"><span class="st-price-model"><span class="st-logo-box"><img src="https://api.iconify.design/logos:openai-icon.svg" alt="OpenAI"/></span><span><strong>GPT-5.6 Sol</strong><small>gpt-5.6-sol</small></span></span><span class="st-save-stack"><strong><span data-copy-zh="省 " data-copy-en="Save ">省 </span>89%</strong><small data-copy-zh="约 1.1 折" data-copy-en="10.7% of list">约 1.1 折</small></span></div><div class="st-mobile-price-grid"><div><span data-copy-zh="厂商官方价 / 1M" data-copy-en="Provider list / 1M">厂商官方价 / 1M</span><b>IN $4.000</b><b>OUT $20.000</b><small data-copy-zh="短上下文促销价" data-copy-en="Short-context promo">短上下文促销价</small></div><div class="st-mobile-price-current"><span data-copy-zh="SuperToken / 1M" data-copy-en="SuperToken / 1M">SuperToken / 1M</span><b>IN $0.429</b><b>OUT $2.571</b></div></div><div class="st-mobile-price-proof"><a href="https://developers.openai.com/api/docs/pricing">OpenAI</a><span>·</span><a href="https://supertoken.cc/pricing">SuperToken</a></div></article>
-                        <article class="st-mobile-price-card"><div class="st-mobile-price-top"><span class="st-price-model"><span class="st-logo-box"><img src="https://api.iconify.design/simple-icons:googlegemini.svg?color=%234285F4" alt="Google Gemini"/></span><span><strong>Gemini 3.7 Flash</strong><small>gemini-3.7-flash</small></span></span><span class="st-save-stack"><strong><span data-copy-zh="省 " data-copy-en="Save ">省 </span>64%</strong><small data-copy-zh="约 3.6 折" data-copy-en="35.7% of list">约 3.6 折</small></span></div><div class="st-mobile-price-grid"><div><span data-copy-zh="厂商官方价 / 1M" data-copy-en="Provider list / 1M">厂商官方价 / 1M</span><b>IN $0.750</b><b>OUT $3.750</b><small data-copy-zh="2026 年促销价" data-copy-en="2026 promo price">2026 年促销价</small></div><div class="st-mobile-price-current"><span data-copy-zh="SuperToken / 1M" data-copy-en="SuperToken / 1M">SuperToken / 1M</span><b>IN $0.268</b><b>OUT $1.339</b></div></div><div class="st-mobile-price-proof"><a href="https://ai.google.dev/gemini-api/docs/pricing">Google</a><span>·</span><a href="https://supertoken.cc/pricing">SuperToken</a></div></article>
-                    </div>
-                    <div class="st-notice st-price-disclaimer"><i data-lucide="badge-info"></i><span data-copy-zh="节省按输入价计算。GPT-5.6 Sol 使用官方短上下文促销价；Gemini 3.7 Flash 使用 2026 年促销价。长上下文、缓存、批量与特殊线路费率不同，最终扣费以控制台使用日志为准。" data-copy-en="Savings use input pricing. GPT-5.6 Sol uses OpenAI's short-context promotion and Gemini 3.7 Flash uses its 2026 promotion. Long context, caching, batch, and special routes differ; console usage logs remain the billing source of truth.">节省按输入价计算。GPT-5.6 Sol 使用官方短上下文促销价；Gemini 3.7 Flash 使用 2026 年促销价。长上下文、缓存、批量与特殊线路费率不同，最终扣费以控制台使用日志为准。</span></div>
-                </section>
-
-                <section class="st-pricing-panel" data-price-panel="image" hidden>
-                    <div class="st-price-panel-head"><div><h3 data-copy-zh="图片生成，按次计价" data-copy-en="Image generation, priced per request">图片生成，按次计价</h3><p data-copy-zh="创作模型不与 Token 模型混算；下列为官网目录当前的按次充值价。" data-copy-en="Creative models are not mixed with token pricing. These are current per-request recharge prices from the public catalog.">创作模型不与 Token 模型混算；下列为官网目录当前的按次充值价。</p></div><a class="st-primary-link" href="https://supertoken.cc/pricing"><span data-copy-zh="完整实时目录" data-copy-en="Live catalog">完整实时目录</span><i data-lucide="arrow-up-right"></i></a></div>
-                    <div class="st-creative-price-grid">
-                        <article class="st-creative-price-card"><div class="st-creative-price-top"><span class="st-price-model"><span class="st-logo-box"><img src="https://api.iconify.design/logos:openai-icon.svg" alt="OpenAI"/></span><span><strong>GPT Image 2</strong><small>gpt-image-2-count</small></span></span><span class="st-creative-price-value">$0.013 <small data-copy-zh="/ 次" data-copy-en="/ request">/ 次</small></span></div><p data-copy-zh="OpenAI 兼容图片生成；按次低成本线路。" data-copy-en="OpenAI-compatible image generation through the low-cost per-request route.">OpenAI 兼容图片生成；按次低成本线路。</p><span class="st-creative-route">POST /v1/images/generations</span></article>
-                        <article class="st-creative-price-card"><div class="st-creative-price-top"><span class="st-price-model"><span class="st-logo-box"><img src="https://api.iconify.design/simple-icons:googlegemini.svg?color=%234285F4" alt="Google Gemini"/></span><span><strong>Nano Banana</strong><small>gemini-3.1-flash-image</small></span></span><span class="st-creative-price-value">$0.036 <small data-copy-zh="/ 次" data-copy-en="/ request">/ 次</small></span></div><p data-copy-zh="官网“小香蕉”分组昵称；调用时使用真实模型 ID。" data-copy-en="The public catalog's “Nano Banana” route nickname; use the API model ID shown here.">官网“小香蕉”分组昵称；调用时使用真实模型 ID。</p><span class="st-creative-route">POST /v1/images/generations</span></article>
-                        <article class="st-creative-price-card"><div class="st-creative-price-top"><span class="st-price-model"><span class="st-logo-box"><img src="https://api.iconify.design/simple-icons:googlegemini.svg?color=%234285F4" alt="Google Gemini"/></span><span><strong>Nano Banana Pro</strong><small>gemini-3-pro-image-count</small></span></span><span class="st-creative-price-value">$0.054 <small data-copy-zh="/ 次" data-copy-en="/ request">/ 次</small></span></div><p data-copy-zh="官网“大香蕉”高质量图片线路；按次模型 ID 单独列出。" data-copy-en="The public catalog's high-quality Gemini image route, with a separate per-request model ID.">官网“大香蕉”高质量图片线路；按次模型 ID 单独列出。</p><span class="st-creative-route">POST /v1/images/generations</span></article>
-                    </div>
-                </section>
-
-                <section class="st-pricing-panel" data-price-panel="video" hidden>
-                    <div class="st-price-panel-head"><div><h3 data-copy-zh="视频生成，按秒计价" data-copy-en="Video generation, priced per second">视频生成，按秒计价</h3><p data-copy-zh="视频任务使用统一任务接口；下列为官网目录当前的每生成秒充值价。" data-copy-en="Video tasks use one unified task endpoint. These are current recharge prices per generated second from the public catalog.">视频任务使用统一任务接口；下列为官网目录当前的每生成秒充值价。</p></div><a class="st-primary-link" href="https://supertoken.cc/pricing"><span data-copy-zh="完整实时目录" data-copy-en="Live catalog">完整实时目录</span><i data-lucide="arrow-up-right"></i></a></div>
-                    <div class="st-creative-price-grid st-video-price-grid">
-                        <article class="st-creative-price-card"><div class="st-creative-price-top"><span class="st-price-model"><span class="st-logo-box"><img src="https://api.iconify.design/simple-icons:bytedance.svg?color=%23000000" alt="ByteDance"/></span><span><strong>Seedance 2.0 Fast</strong><small>seedance-2.0-fast-720p</small></span></span><span class="st-creative-price-value">$0.026 <small data-copy-zh="/ 秒" data-copy-en="/ sec">/ 秒</small></span></div><p data-copy-zh="720p 快速视频生成型号，按最终生成时长计费。" data-copy-en="A fast 720p video model, billed by final generated duration.">720p 快速视频生成型号，按最终生成时长计费。</p><span class="st-creative-route">POST /v1/video/tasks</span></article>
-                        <article class="st-creative-price-card"><div class="st-creative-price-top"><span class="st-price-model"><span class="st-logo-box"><img src="https://api.iconify.design/logos:grok-icon.svg" alt="xAI Grok"/></span><span><strong>Grok Imagine Video 1.5</strong><small>grok-imagine-video-1.5-preview-720p</small></span></span><span class="st-creative-price-value">$0.043 <small data-copy-zh="/ 秒" data-copy-en="/ sec">/ 秒</small></span></div><p data-copy-zh="xAI 720p 视频预览型号，通过统一视频任务接口发起。" data-copy-en="xAI's 720p preview video model, submitted through the unified video task endpoint.">xAI 720p 视频预览型号，通过统一视频任务接口发起。</p><span class="st-creative-route">POST /v1/video/tasks</span></article>
-                    </div>
-                </section>
-            </div>
-        </section>
-
-        <section class="st-section">
-            <div class="st-wrap st-price-details">
+<main class="page pricing">
+    <header class="page-head">
+        <div class="wrap">
+            <div class="page-head-row">
                 <div>
-                    <span class="st-eyebrow">ONE ENDPOINT</span>
-                    <h2 class="st-section-title" data-copy-zh="价格看清楚，接入仍是一行。" data-copy-en="Clear pricing, one-line integration.">价格看清楚，接入仍是一行。</h2>
-                    <p class="st-section-copy" data-copy-zh="OpenAI 兼容客户端使用带 /v1 的地址；Claude Code 等 Anthropic 客户端通常使用不带 /v1 的地址。" data-copy-en="Use the /v1 URL for OpenAI-compatible clients. Anthropic clients such as Claude Code usually use the URL without /v1.">OpenAI 兼容客户端使用带 /v1 的地址；Claude Code 等 Anthropic 客户端通常使用不带 /v1 的地址。</p>
+                    <div class="eyebrow">Price proof · same model, same unit</div>
+                    <h1 data-copy-zh="官方价，本站价，一眼对上。" data-copy-en="List price and SuperToken price, side by side.">官方价，本站价，一眼对上。</h1>
+                    <p class="lead" data-copy-zh="只比较同一模型、同一币种和同一计价单位。文本、图片、视频各按自己的计费方式展示。" data-copy-en="Every comparison uses the same model, currency and billing unit. Text, image and video each keep their own unit.">只比较同一模型、同一币种和同一计价单位。文本、图片、视频各按自己的计费方式展示。</p>
                 </div>
-                <div class="st-endpoint-list">
-                    <div><span>OpenAI compatible</span><code>https://api.supertoken.cc/v1</code></div>
-                    <div><span>Anthropic / Claude Code</span><code>https://api.supertoken.cc</code></div>
+                <div class="page-meta">
+                    <span><b>USD</b> <span data-copy-zh="计价" data-copy-en="pricing">计价</span></span><span class="vsep"></span><span><span data-copy-zh="公开目录核对" data-copy-en="catalog checked">公开目录核对</span> <b>2026-08-26</b></span>
                 </div>
             </div>
-        </section>
-    </main>
-    <div id="site-footer-mount"></div>
-    <script>
-        const priceTabs = [...document.querySelectorAll('.st-price-tab')];
-        const pricePanels = [...document.querySelectorAll('.st-pricing-panel')];
-        priceTabs.forEach(tab => tab.addEventListener('click', () => {
-            const view = tab.dataset.priceView;
-            priceTabs.forEach(item => { const active = item === tab; item.classList.toggle('active', active); item.setAttribute('aria-selected', String(active)); });
-            pricePanels.forEach(panel => { panel.hidden = panel.dataset.pricePanel !== view; });
-        }));
-    </script>
+            <div class="toolbar">
+                <div class="toolbar-group">
+                    <a class="chip active" href="#text" data-copy-zh="文本 · 每 1M Token" data-copy-en="Text · per 1M tokens">文本 · 每 1M Token</a>
+                    <a class="chip" href="#image" data-copy-zh="图片 · 每次" data-copy-en="Image · per request">图片 · 每次</a>
+                    <a class="chip" href="#video" data-copy-zh="视频 · 每秒" data-copy-en="Video · per second">视频 · 每秒</a>
+                </div>
+                <a class="link" href="https://supertoken.cc/pricing"><span data-copy-zh="完整实时目录" data-copy-en="Live catalog">完整实时目录</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7"/><path d="M8 7h9v9"/></svg></a>
+            </div>
+        </div>
+    </header>
+
+    <!-- 文本 -->
+    <section class="section" id="text">
+        <div class="wrap table-scroll">
+            <div class="sect">
+                <div class="sect-head">
+                    <div class="sect-title"><h2 data-copy-zh="文本与推理" data-copy-en="Text &amp; reasoning">文本与推理</h2><span class="meta" data-copy-zh="每 1M Token · 输入 / 输出分开看" data-copy-en="per 1M tokens · input and output separated">每 1M Token · 输入 / 输出分开看</span></div>
+                    <span class="meta">POST /v1/chat/completions · /v1/messages</span>
+                </div>
+                <div class="trow head"><span class="th" data-copy-zh="模型" data-copy-en="Model">模型</span><span class="th" data-copy-zh="厂商官方价" data-copy-en="Provider list price">厂商官方价</span><span class="th" data-copy-zh="SuperToken 充值价" data-copy-en="SuperToken price">SuperToken 充值价</span><span class="th" data-copy-zh="节省" data-copy-en="Savings">节省</span><span class="th" data-copy-zh="价格依据" data-copy-en="Sources">价格依据</span></div>
+
+                <div class="trow text">
+                    <div class="model-id"><span class="logo-box"><img src="assets/logos/anthropic.svg" alt="Anthropic"/></span><div><strong>Claude Opus 5</strong><small>claude-opus-5</small></div></div>
+                    <div class="kvs"><div class="kv"><small>IN</small><span class="strike">$5.000</span></div><div class="kv"><small>OUT</small><span class="strike">$25.000</span></div></div>
+                    <div class="kvs"><div class="kv"><small>IN</small><span class="price-in">$0.571</span></div><div class="kv"><small>OUT</small><span class="price-out">$2.857</span></div></div>
+                    <div class="savecol"><b>89%</b><small data-copy-zh="约 1.1 折" data-copy-en="11.4% of list">约 1.1 折</small></div>
+                    <div class="srcs"><a class="src" href="https://platform.claude.com/docs/en/about-claude/pricing" target="_blank" rel="noopener noreferrer" data-copy-zh="Anthropic 官方定价" data-copy-en="Anthropic pricing">Anthropic 官方定价</a><a class="src" href="https://supertoken.cc/pricing" data-copy-zh="SuperToken 目录" data-copy-en="SuperToken catalog">SuperToken 目录</a></div>
+                </div>
+                <div class="trow text">
+                    <div class="model-id"><span class="logo-box"><img src="assets/logos/openai.svg" alt="OpenAI"/></span><div><strong>GPT-5.6 Sol</strong><small>gpt-5.6-sol</small></div></div>
+                    <div class="kvs"><div class="kv"><small>IN</small><span class="strike">$4.000</span></div><div class="kv"><small>OUT</small><span class="strike">$20.000</span></div><span class="note" data-copy-zh="短上下文促销价" data-copy-en="Short-context promo">短上下文促销价</span></div>
+                    <div class="kvs"><div class="kv"><small>IN</small><span class="price-in">$0.429</span></div><div class="kv"><small>OUT</small><span class="price-out">$2.571</span></div></div>
+                    <div class="savecol"><b>89%</b><small data-copy-zh="约 1.1 折" data-copy-en="10.7% of list">约 1.1 折</small></div>
+                    <div class="srcs"><a class="src" href="https://developers.openai.com/api/docs/pricing" target="_blank" rel="noopener noreferrer" data-copy-zh="OpenAI 官方定价" data-copy-en="OpenAI pricing">OpenAI 官方定价</a><a class="src" href="https://supertoken.cc/pricing" data-copy-zh="SuperToken 目录" data-copy-en="SuperToken catalog">SuperToken 目录</a></div>
+                </div>
+                <div class="trow text">
+                    <div class="model-id"><span class="logo-box"><img src="assets/logos/gemini.svg" alt="Google Gemini"/></span><div><strong>Gemini 3.7 Flash</strong><small>gemini-3.7-flash</small></div></div>
+                    <div class="kvs"><div class="kv"><small>IN</small><span class="strike">$0.750</span></div><div class="kv"><small>OUT</small><span class="strike">$3.750</span></div><span class="note" data-copy-zh="2026 年促销价" data-copy-en="2026 promo price">2026 年促销价</span></div>
+                    <div class="kvs"><div class="kv"><small>IN</small><span class="price-in">$0.268</span></div><div class="kv"><small>OUT</small><span class="price-out">$1.339</span></div></div>
+                    <div class="savecol"><b>64%</b><small data-copy-zh="约 3.6 折" data-copy-en="35.7% of list">约 3.6 折</small></div>
+                    <div class="srcs"><a class="src" href="https://ai.google.dev/gemini-api/docs/pricing" target="_blank" rel="noopener noreferrer" data-copy-zh="Google 官方定价" data-copy-en="Google pricing">Google 官方定价</a><a class="src" href="https://supertoken.cc/pricing" data-copy-zh="SuperToken 目录" data-copy-en="SuperToken catalog">SuperToken 目录</a></div>
+                </div>
+                <div class="sect-foot"><span data-copy-zh="节省按输入价计算。长上下文、缓存、批量与特殊线路费率不同，最终扣费以控制台使用日志为准。" data-copy-en="Savings use input pricing. Long context, caching, batch and special routes differ; console usage logs remain the billing source of truth.">节省按输入价计算。长上下文、缓存、批量与特殊线路费率不同，最终扣费以控制台使用日志为准。</span></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 图片 -->
+    <section class="section" id="image">
+        <div class="wrap table-scroll">
+            <div class="sect">
+                <div class="sect-head">
+                    <div class="sect-title"><h2 data-copy-zh="图片生成" data-copy-en="Image generation">图片生成</h2><span class="meta" data-copy-zh="按次计价 · 不与 Token 混算" data-copy-en="per request · not mixed with token pricing">按次计价 · 不与 Token 混算</span></div>
+                    <span class="meta">POST /v1/images/generations</span>
+                </div>
+                <div class="trow head"><span class="th" data-copy-zh="模型" data-copy-en="Model">模型</span><span class="th" data-copy-zh="接口" data-copy-en="Endpoint">接口</span><span class="th" data-copy-zh="SuperToken 充值价" data-copy-en="SuperToken price">SuperToken 充值价</span><span class="th" data-copy-zh="单位" data-copy-en="Unit">单位</span><span class="th" data-copy-zh="说明" data-copy-en="Notes">说明</span></div>
+                <div class="trow">
+                    <div class="model-id"><span class="logo-box"><img src="assets/logos/openai.svg" alt="OpenAI"/></span><div><strong>GPT Image 2</strong><small>gpt-image-2-count</small></div></div>
+                    <span class="cell-mono">/v1/images/generations</span>
+                    <div class="price"><b>$0.013</b><small data-copy-zh="/ 次" data-copy-en="/ request">/ 次</small></div>
+                    <span class="unit" data-copy-zh="按次" data-copy-en="per request">按次</span>
+                    <span class="cell-desc" data-copy-zh="OpenAI 兼容图片生成；按次低成本线路。" data-copy-en="OpenAI-compatible image generation on the low-cost per-request route.">OpenAI 兼容图片生成；按次低成本线路。</span>
+                </div>
+                <div class="trow">
+                    <div class="model-id"><span class="logo-box"><img src="assets/logos/gemini.svg" alt="Google Gemini"/></span><div><strong>Nano Banana</strong><small>gemini-3.1-flash-image</small></div></div>
+                    <span class="cell-mono">/v1/images/generations</span>
+                    <div class="price"><b>$0.036</b><small data-copy-zh="/ 次" data-copy-en="/ request">/ 次</small></div>
+                    <span class="unit" data-copy-zh="按次" data-copy-en="per request">按次</span>
+                    <span class="cell-desc" data-copy-zh="官网“小香蕉”分组昵称；调用时使用真实模型 ID。" data-copy-en="The catalog's “Nano Banana” route nickname; use the API model ID shown here.">官网“小香蕉”分组昵称；调用时使用真实模型 ID。</span>
+                </div>
+                <div class="trow">
+                    <div class="model-id"><span class="logo-box"><img src="assets/logos/gemini.svg" alt="Google Gemini"/></span><div><strong>Nano Banana Pro</strong><small>gemini-3-pro-image-count</small></div></div>
+                    <span class="cell-mono">/v1/images/generations</span>
+                    <div class="price"><b>$0.054</b><small data-copy-zh="/ 次" data-copy-en="/ request">/ 次</small></div>
+                    <span class="unit" data-copy-zh="按次" data-copy-en="per request">按次</span>
+                    <span class="cell-desc" data-copy-zh="官网“大香蕉”高质量图片线路；按次模型 ID 单独列出。" data-copy-en="The catalog's high-quality Gemini image route, with a separate per-request model ID.">官网“大香蕉”高质量图片线路；按次模型 ID 单独列出。</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 视频 -->
+    <section class="section last" id="video">
+        <div class="wrap table-scroll">
+            <div class="sect">
+                <div class="sect-head">
+                    <div class="sect-title"><h2 data-copy-zh="视频生成" data-copy-en="Video generation">视频生成</h2><span class="meta" data-copy-zh="按生成秒数计价 · 统一任务接口" data-copy-en="per generated second · unified task endpoint">按生成秒数计价 · 统一任务接口</span></div>
+                    <span class="meta">POST /v1/video/tasks</span>
+                </div>
+                <div class="trow head"><span class="th" data-copy-zh="模型" data-copy-en="Model">模型</span><span class="th" data-copy-zh="接口" data-copy-en="Endpoint">接口</span><span class="th" data-copy-zh="SuperToken 充值价" data-copy-en="SuperToken price">SuperToken 充值价</span><span class="th" data-copy-zh="单位" data-copy-en="Unit">单位</span><span class="th" data-copy-zh="说明" data-copy-en="Notes">说明</span></div>
+                <div class="trow">
+                    <div class="model-id"><span class="logo-box"><img src="assets/logos/bytedance.svg" alt="ByteDance"/></span><div><strong>Seedance 2.0 Fast</strong><small>seedance-2.0-fast-720p</small></div></div>
+                    <span class="cell-mono">/v1/video/tasks</span>
+                    <div class="price"><b>$0.026</b><small data-copy-zh="/ 秒" data-copy-en="/ sec">/ 秒</small></div>
+                    <span class="unit" data-copy-zh="按生成秒" data-copy-en="per second">按生成秒</span>
+                    <span class="cell-desc" data-copy-zh="720p 快速视频生成型号，按最终生成时长计费。" data-copy-en="A fast 720p video model, billed by final generated duration.">720p 快速视频生成型号，按最终生成时长计费。</span>
+                </div>
+                <div class="trow">
+                    <div class="model-id"><span class="logo-box"><img src="assets/logos/grok.svg" alt="xAI Grok"/></span><div><strong>Grok Imagine Video 1.5</strong><small>grok-imagine-video-1.5-preview-720p</small></div></div>
+                    <span class="cell-mono">/v1/video/tasks</span>
+                    <div class="price"><b>$0.043</b><small data-copy-zh="/ 秒" data-copy-en="/ sec">/ 秒</small></div>
+                    <span class="unit" data-copy-zh="按生成秒" data-copy-en="per second">按生成秒</span>
+                    <span class="cell-desc" data-copy-zh="xAI 720p 视频预览型号，通过统一视频任务接口发起。" data-copy-en="xAI's 720p preview video model, submitted through the unified video task endpoint.">xAI 720p 视频预览型号，通过统一视频任务接口发起。</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="endpoints">
+        <div class="wrap">
+            <div class="endpoints-copy">
+                <div class="eyebrow">One endpoint</div>
+                <h2 data-copy-zh="价格看清楚，接入仍是一行。" data-copy-en="Clear pricing, one-line integration.">价格看清楚，接入仍是一行。</h2>
+                <p data-copy-zh="OpenAI 兼容客户端使用带 /v1 的地址；Claude Code 等 Anthropic 客户端通常使用不带 /v1 的地址。" data-copy-en="Use the /v1 URL for OpenAI-compatible clients. Anthropic clients such as Claude Code usually use the URL without /v1.">OpenAI 兼容客户端使用带 /v1 的地址；Claude Code 等 Anthropic 客户端通常使用不带 /v1 的地址。</p>
+            </div>
+            <div class="endpoint-cards">
+                <div class="endpoint-card"><small>OpenAI compatible</small><code>https://api.supertoken.cc/v1</code></div>
+                <div class="endpoint-card"><small>Anthropic / Claude Code</small><code>https://api.supertoken.cc</code></div>
+            </div>
+        </div>
+    </section>
+</main>
+
+<div id="site-footer-mount"></div>
 </body>
 </html>

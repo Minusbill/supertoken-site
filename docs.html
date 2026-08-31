@@ -1,56 +1,87 @@
 <!DOCTYPE html>
-<html lang="zh-CN" data-theme="dark" data-lang="zh" data-page="docs">
+<html lang="zh-CN" data-lang="zh" data-page="docs" data-title-en="Developer docs - SuperToken">
 <head>
     <meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1"/>
     <title>开发文档 - SuperToken</title>
     <meta name="description" content="SuperToken API 快速接入、鉴权、协议兼容、分组路由与错误处理文档。"/>
-    <script>(function(){const t=localStorage.getItem('st-theme')||'dark';const l=localStorage.getItem('st-lang')||'zh';document.documentElement.dataset.theme=t;document.documentElement.dataset.lang=l;document.documentElement.classList.add(t);})();</script>
-    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+    <link rel="icon" type="image/svg+xml" href="favicon.svg"/>
+    <script>(function(){try{document.documentElement.dataset.lang=localStorage.getItem('st-lang')||'zh';}catch(e){}})();</script>
+    <link rel="preconnect" href="https://fonts.googleapis.com"/>
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+    <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500..800&family=Noto+Sans+SC:wght@400;500;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet"/>
     <link href="site.css" rel="stylesheet"/>
-    <script src="https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js" defer></script>
     <script src="site.js" type="module"></script>
 </head>
-<body class="site-body">
-    <div id="site-nav-mount"></div>
-    <main class="st-page">
-        <header class="st-page-hero"><div class="st-wrap"><span class="st-eyebrow">DEVELOPER DOCS / ONE BASE URL</span><h1 class="st-page-title" data-copy-zh="改一个地址，发出第一条请求。" data-copy-en="Change one URL and send your first request.">改一个地址，发出第一条请求。</h1><p class="st-page-lead" data-copy-zh="兼容 OpenAI Chat Completions 与 Anthropic Messages 协议。先用最短示例跑通，再按业务需要选择模型和线路分组。" data-copy-en="Compatible with OpenAI Chat Completions and Anthropic Messages. Start with the smallest working request, then choose models and route groups for your workload.">兼容 OpenAI Chat Completions 与 Anthropic Messages 协议。先用最短示例跑通，再按业务需要选择模型和线路分组。</p></div></header>
-        <section class="st-section"><div class="st-wrap st-doc-layout">
-            <aside class="st-doc-nav" aria-label="文档目录"><a class="active" href="#quickstart">快速开始</a><a href="#auth">鉴权</a><a href="#protocols">协议兼容</a><a href="#groups">线路分组</a><a href="#errors">错误处理</a></aside>
-            <div class="st-doc-content">
-                <article class="st-doc-block" id="quickstart"><span class="st-eyebrow">01 / QUICKSTART</span><h2>快速开始</h2><p>把 SDK 的 <span class="st-inline-code">base_url</span> 指向 SuperToken，使用控制台生成的 API Key，并传入模型 ID。</p>
-                    <div class="st-code"><button class="st-icon-button st-code-copy" type="button" data-copy-target="curl-example" aria-label="复制 cURL 示例" title="复制"><i data-lucide="copy"></i></button><code id="curl-example">curl https://api.supertoken.cc/v1/chat/completions \
-  -H "x-api-key: sk-st-..." \
-  -H "Content-Type: application/json" \
-  -d '{
-    "model": "claude-opus-5",
-    "messages": [{"role":"user","content":"你好"}],
-    "stream": true
-  }'</code></div>
-                    <div class="st-notice"><i data-lucide="shield-check"></i><span>示例中的 Key 是占位符。真实 Key 只应保存在服务端环境变量中，不要写进前端代码或提交到仓库。</span></div>
-                </article>
-                <article class="st-doc-block" id="auth"><span class="st-eyebrow">02 / AUTH</span><h2>鉴权</h2><p>官方文档推荐使用 <span class="st-inline-code">x-api-key</span> 请求头；兼容 OpenAI 的客户端也可以使用 Bearer Token。</p><div class="st-code"><code>x-api-key: $SUPERTOKEN_API_KEY
+<body>
+<div id="site-nav-mount"></div>
 
-Authorization: Bearer $SUPERTOKEN_API_KEY</code></div><p>不同环境建议创建独立 Key，便于隔离用量、吊销权限和核对账单。</p></article>
-                <article class="st-doc-block" id="protocols"><span class="st-eyebrow">03 / PROTOCOLS</span><h2>协议兼容</h2><p>同一个 Base URL 支持两类常用请求格式。选择与现有 SDK 一致的入口即可。</p><div class="st-table-scroll"><table class="st-spec-table"><thead><tr><th>协议</th><th>路径</th><th>适用客户端</th></tr></thead><tbody><tr><td>OpenAI Compatible</td><td>/v1/chat/completions</td><td>OpenAI SDK、Cursor、NextChat 等</td></tr><tr><td>Anthropic Messages</td><td>/v1/messages</td><td>Anthropic SDK、Claude Code 等</td></tr></tbody></table></div></article>
-                <article class="st-doc-block" id="groups"><span class="st-eyebrow">04 / ROUTE GROUPS</span><h2>线路分组</h2><p>需要指定线路时，在模型 ID 后增加 <span class="st-inline-code">@分组名</span>，或者传入请求头。没有指定时使用账户默认分组。</p><div class="st-code"><code>"model": "claude-opus-5@claude-max"
-
-X-Route-Group: claude-max</code></div><p>分组来源、倍率和实际输入/输出价格统一在定价页公开，最终扣费以控制台账单为准。</p></article>
-                <article class="st-doc-block" id="errors"><span class="st-eyebrow">05 / ERRORS</span><h2>错误处理</h2><div class="st-table-scroll"><table class="st-spec-table"><thead><tr><th>状态码</th><th>含义</th><th>建议处理</th></tr></thead><tbody><tr><td>401</td><td>Key 无效或已失效</td><td>检查 Authorization 请求头</td></tr><tr><td>402</td><td>账户余额不足</td><td>核对余额与账单</td></tr><tr><td>429</td><td>请求频率或上游限流</td><td>指数退避后重试</td></tr><tr><td>5xx</td><td>网关或上游异常</td><td>记录 request_id 并查看状态页</td></tr></tbody></table></div></article>
+<main class="page docs">
+    <header class="page-head">
+        <div class="wrap">
+            <div class="page-head-row">
+                <div>
+                    <div class="eyebrow">Developer docs · one base URL</div>
+                    <h1 data-copy-zh="改一个地址，发出第一条请求。" data-copy-en="Change one URL and send your first request.">改一个地址，发出第一条请求。</h1>
+                    <p class="lead" data-copy-zh="兼容 OpenAI Chat Completions 与 Anthropic Messages 协议。先用最短示例跑通，再按业务需要选择模型和线路分组。" data-copy-en="Compatible with OpenAI Chat Completions and Anthropic Messages. Start with the smallest working request, then choose models and route groups for your workload.">兼容 OpenAI Chat Completions 与 Anthropic Messages 协议。先用最短示例跑通，再按业务需要选择模型和线路分组。</p>
+                </div>
+                <a class="link" href="https://docs.supertoken.cc/" target="_blank" rel="noopener noreferrer"><span data-copy-zh="完整文档 docs.supertoken.cc" data-copy-en="Full docs at docs.supertoken.cc">完整文档 docs.supertoken.cc</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7"/><path d="M8 7h9v9"/></svg></a>
             </div>
-        </div></section>
-    </main>
-    <div id="site-footer-mount"></div>
-    <script>
-        document.querySelectorAll('[data-copy-target]').forEach(button => button.addEventListener('click', async () => {
-            const code = document.getElementById(button.dataset.copyTarget).textContent;
-            await navigator.clipboard.writeText(code);
-            button.innerHTML = '<i data-lucide="check"></i>';
-            window.lucide?.createIcons();
-            setTimeout(() => { button.innerHTML = '<i data-lucide="copy"></i>'; window.lucide?.createIcons(); }, 1400);
-        }));
-        const docLinks = [...document.querySelectorAll('.st-doc-nav a')];
-        docLinks.forEach(link => link.addEventListener('click', () => { docLinks.forEach(item => item.classList.toggle('active', item === link)); }));
-    </script>
+        </div>
+    </header>
+
+    <div class="wrap doc-layout">
+        <aside class="doc-nav" aria-label="文档目录">
+            <a class="active" href="#quickstart" data-copy-zh="快速开始" data-copy-en="Quickstart">快速开始</a>
+            <a href="#auth" data-copy-zh="鉴权" data-copy-en="Auth">鉴权</a>
+            <a href="#protocols" data-copy-zh="协议兼容" data-copy-en="Protocols">协议兼容</a>
+            <a href="#groups" data-copy-zh="线路分组" data-copy-en="Route groups">线路分组</a>
+            <a href="#errors" data-copy-zh="错误处理" data-copy-en="Errors">错误处理</a>
+        </aside>
+        <div class="doc-content">
+            <article class="doc-block" id="quickstart">
+                <span class="eyebrow">01 / Quickstart</span>
+                <h2 data-copy-zh="快速开始" data-copy-en="Quickstart">快速开始</h2>
+                <p>把 SDK 的 <span class="inline-code">base_url</span> 指向 SuperToken，使用控制台生成的 API Key，并传入模型 ID。</p>
+                <div class="code">
+                    <button type="button" class="code-copy" data-copy-target="curl-example" aria-label="复制示例"><i data-copy-icon><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V6a2 2 0 0 1 2-2h9"/></svg></i></button>
+<pre id="curl-example"><span class="l">curl https://api.supertoken.cc/v1/chat/completions \</span><span class="l">  -H <span class="s">"x-api-key: sk-st-..."</span> \</span><span class="l">  -H <span class="s">"Content-Type: application/json"</span> \</span><span class="l">  -d <span class="s">'{</span></span><span class="l s">    "model": "claude-opus-5",</span><span class="l s">    "messages": [{"role":"user","content":"你好"}],</span><span class="l s">    "stream": true</span><span class="l s">  }'</span></pre>
+                </div>
+                <div class="doc-notice"><span>示例中的 Key 是占位符。真实 Key 只应保存在服务端环境变量中，不要写进前端代码或提交到仓库。</span></div>
+            </article>
+
+            <article class="doc-block" id="auth">
+                <span class="eyebrow">02 / Auth</span>
+                <h2 data-copy-zh="鉴权" data-copy-en="Auth">鉴权</h2>
+                <p>官方文档推荐使用 <span class="inline-code">x-api-key</span> 请求头；兼容 OpenAI 的客户端也可以使用 Bearer Token。</p>
+                <div class="code"><pre><span class="l">x-api-key: $SUPERTOKEN_API_KEY</span><span class="l"> </span><span class="l">Authorization: Bearer $SUPERTOKEN_API_KEY</span></pre></div>
+                <p>不同环境建议创建独立 Key，便于隔离用量、吊销权限和核对账单。</p>
+            </article>
+
+            <article class="doc-block" id="protocols">
+                <span class="eyebrow">03 / Protocols</span>
+                <h2 data-copy-zh="协议兼容" data-copy-en="Protocols">协议兼容</h2>
+                <p>同一个 Base URL 支持两类常用请求格式。选择与现有 SDK 一致的入口即可。</p>
+                <div class="table-scroll"><table class="spec"><thead><tr><th>协议</th><th>路径</th><th>适用客户端</th></tr></thead><tbody><tr><td>OpenAI Compatible</td><td>/v1/chat/completions</td><td>OpenAI SDK、Cursor、NextChat 等</td></tr><tr><td>Anthropic Messages</td><td>/v1/messages</td><td>Anthropic SDK、Claude Code 等</td></tr></tbody></table></div>
+            </article>
+
+            <article class="doc-block" id="groups">
+                <span class="eyebrow">04 / Route groups</span>
+                <h2 data-copy-zh="线路分组" data-copy-en="Route groups">线路分组</h2>
+                <p>需要指定线路时，在模型 ID 后增加 <span class="inline-code">@分组名</span>，或者传入请求头。没有指定时使用账户默认分组。</p>
+                <div class="code"><pre><span class="l"><span class="s">"model"</span>: <span class="s">"claude-opus-5@claude-max"</span></span><span class="l"> </span><span class="l">X-Route-Group: claude-max</span></pre></div>
+                <p>分组来源、倍率和实际输入/输出价格统一在定价页公开，最终扣费以控制台账单为准。</p>
+            </article>
+
+            <article class="doc-block" id="errors">
+                <span class="eyebrow">05 / Errors</span>
+                <h2 data-copy-zh="错误处理" data-copy-en="Errors">错误处理</h2>
+                <div class="table-scroll"><table class="spec"><thead><tr><th>状态码</th><th>含义</th><th>建议处理</th></tr></thead><tbody><tr><td>401</td><td>Key 无效或已失效</td><td>检查 Authorization 请求头</td></tr><tr><td>402</td><td>账户余额不足</td><td>核对余额与账单</td></tr><tr><td>429</td><td>请求频率或上游限流</td><td>指数退避后重试</td></tr><tr><td>5xx</td><td>网关或上游异常</td><td>记录 request_id 并查看状态页</td></tr></tbody></table></div>
+            </article>
+        </div>
+    </div>
+</main>
+
+<div id="site-footer-mount"></div>
 </body>
 </html>

@@ -1,41 +1,86 @@
 <!DOCTYPE html>
-<html lang="zh-CN" data-theme="dark" data-lang="zh" data-page="status">
+<html lang="zh-CN" data-lang="zh" data-page="status" data-title-en="Service status - SuperToken">
 <head>
     <meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1"/>
     <title>服务状态 - SuperToken</title>
     <meta name="description" content="SuperToken 网关、模型线路和控制台服务状态页面。"/>
-    <script>(function(){const t=localStorage.getItem('st-theme')||'dark';const l=localStorage.getItem('st-lang')||'zh';document.documentElement.dataset.theme=t;document.documentElement.dataset.lang=l;document.documentElement.classList.add(t);})();</script>
-    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+    <link rel="icon" type="image/svg+xml" href="favicon.svg"/>
+    <script>(function(){try{document.documentElement.dataset.lang=localStorage.getItem('st-lang')||'zh';}catch(e){}})();</script>
+    <link rel="preconnect" href="https://fonts.googleapis.com"/>
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+    <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500..800&family=Noto+Sans+SC:wght@400;500;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet"/>
     <link href="site.css" rel="stylesheet"/>
-    <script src="https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js" defer></script>
     <script src="site.js" type="module"></script>
 </head>
-<body class="site-body">
-    <div id="site-nav-mount"></div>
-    <main class="st-page">
-        <header class="st-page-hero"><div class="st-wrap"><span class="st-eyebrow">SYSTEM STATUS / OBSERVABILITY</span><h1 class="st-page-title" data-copy-zh="每条线路，状态说清楚。" data-copy-en="Clear status for every route.">每条线路，状态说清楚。</h1><p class="st-page-lead" data-copy-zh="网关、控制台和模型上游分开监控，故障与维护事件按时间记录。" data-copy-en="Gateway, console, and upstream routes are monitored independently with incident and maintenance history.">网关、控制台和模型上游分开监控，故障与维护事件按时间记录。</p></div></header>
-        <section class="st-section"><div class="st-wrap">
-            <div class="st-notice" style="margin-bottom:18px"><i data-lucide="plug-zap"></i><span>监控 API 尚未接入。本页当前展示正式界面结构，不代表实时线路状态；接入后应由监控数据驱动，不能使用前端写死的“全部正常”。</span></div>
-            <div class="st-status-summary">
-                <div><div class="st-status-label">当前结论</div><div class="st-status-value pending">等待监控数据</div></div>
-                <div><div class="st-status-label">24H 可用率</div><div class="st-status-value pending">--</div></div>
-                <div><div class="st-status-label">P95 延迟</div><div class="st-status-value pending">-- ms</div></div>
-                <div><div class="st-status-label">最后更新</div><div class="st-status-value pending" style="font-size:14px">未连接</div></div>
+<body>
+<div id="site-nav-mount"></div>
+
+<main class="page status">
+    <header class="page-head">
+        <div class="wrap">
+            <div class="notice" id="status-notice"><b>PENDING</b><span data-copy-zh="监控 API 尚未接入。本页展示正式结构，不代表实时线路状态；接入后由监控数据驱动，前端不写死任何“正常”。" data-copy-en="Monitoring is not connected yet. This page shows the final structure only; once connected it is driven by live data and nothing is hard-coded as healthy.">监控 API 尚未接入。本页展示正式结构，不代表实时线路状态；接入后由监控数据驱动，前端不写死任何“正常”。</span></div>
+            <div class="page-head-row">
+                <div>
+                    <div class="eyebrow">System status · gateway · routes · console</div>
+                    <div class="title-row">
+                        <h1 data-copy-zh="服务状态" data-copy-en="Service status">服务状态</h1>
+                        <span class="status-pill" id="status-overall"><i></i><span data-copy-zh="等待监控数据" data-copy-en="Waiting for monitoring data">等待监控数据</span></span>
+                    </div>
+                    <p class="lead" data-copy-zh="网关、控制台和模型上游分开监控，故障与维护事件按时间记录。" data-copy-en="Gateway, console and upstream routes are monitored independently, with incident and maintenance history.">网关、控制台和模型上游分开监控，故障与维护事件按时间记录。</p>
+                </div>
+                <div class="page-meta">
+                    <span><span data-copy-zh="最后更新" data-copy-en="Last updated">最后更新</span> <b id="status-updated" data-copy-zh="未连接" data-copy-en="not connected">未连接</b></span>
+                </div>
             </div>
-        </div></section>
-        <section class="st-section"><div class="st-wrap"><div class="st-section-head"><div><span class="st-eyebrow">SERVICES</span><h2 class="st-section-title">服务组件</h2><p class="st-section-copy">每个组件独立展示最近 24 个时间窗口，接入监控后按成功率与延迟着色。</p></div></div>
-            <div class="st-service-list">
-                <div class="st-service-row"><div class="st-service-name">API Gateway<span>api.supertoken.cc</span></div><div class="st-bars" aria-label="等待监控数据"></div><div class="st-service-state">未连接</div></div>
-                <div class="st-service-row"><div class="st-service-name">Anthropic Routes<span>Claude 模型线路</span></div><div class="st-bars" aria-label="等待监控数据"></div><div class="st-service-state">未连接</div></div>
-                <div class="st-service-row"><div class="st-service-name">OpenAI Routes<span>GPT / Codex 模型线路</span></div><div class="st-bars" aria-label="等待监控数据"></div><div class="st-service-state">未连接</div></div>
-                <div class="st-service-row"><div class="st-service-name">Image &amp; Video Routes<span>图片与视频生成线路</span></div><div class="st-bars" aria-label="等待监控数据"></div><div class="st-service-state">未连接</div></div>
-                <div class="st-service-row"><div class="st-service-name">Google / xAI Routes<span>Gemini 与 Grok 模型线路</span></div><div class="st-bars" aria-label="等待监控数据"></div><div class="st-service-state">未连接</div></div>
-                <div class="st-service-row"><div class="st-service-name">Console & Billing<span>控制台与账单服务</span></div><div class="st-bars" aria-label="等待监控数据"></div><div class="st-service-state">未连接</div></div>
+        </div>
+    </header>
+
+    <section class="section">
+        <div class="wrap">
+            <div class="summary">
+                <div><span class="th" data-copy-zh="24h 可用率" data-copy-en="24h uptime">24h 可用率</span><span class="num pending" id="sum-24h">--</span></div>
+                <div><span class="th" data-copy-zh="30d 可用率" data-copy-en="30d uptime">30d 可用率</span><span class="num pending" id="sum-30d">--</span></div>
+                <div><span class="th" data-copy-zh="网关 P95 延迟" data-copy-en="Gateway P95 latency">网关 P95 延迟</span><span class="num pending" id="sum-p95">-- <small>ms</small></span></div>
+                <div><span class="th" data-copy-zh="进行中事件" data-copy-en="Active incidents">进行中事件</span><span class="num pending" id="sum-incidents">--</span></div>
             </div>
-        </div></section>
-        <section class="st-section"><div class="st-wrap"><div class="st-section-head"><div><span class="st-eyebrow">INCIDENTS</span><h2 class="st-section-title">事件记录</h2><p class="st-section-copy">暂无可验证的监控事件数据。</p></div></div><div style="padding:28px;border-top:1px solid var(--line);border-bottom:1px solid var(--line);text-align:center;color:var(--muted);font-size:12px">接入监控 API 后显示故障、恢复与计划维护记录。</div></div></section>
-    </main>
-    <div id="site-footer-mount"></div>
+        </div>
+    </section>
+
+    <section class="section">
+        <div class="wrap">
+            <div class="sect">
+                <div class="sect-head">
+                    <div class="sect-title"><h2 data-copy-zh="服务组件" data-copy-en="Components">服务组件</h2><span class="meta" data-copy-zh="最近 24 小时 · 每格 1 小时" data-copy-en="last 24 hours · one cell per hour">最近 24 小时 · 每格 1 小时</span></div>
+                    <div class="legend"><span><i style="background: var(--brand-soft);"></i><em data-copy-zh="正常" data-copy-en="OK">正常</em></span><span><i style="background: var(--warn);"></i><em data-copy-zh="降级" data-copy-en="Degraded">降级</em></span><span><i style="background: var(--danger);"></i><em data-copy-zh="故障" data-copy-en="Outage">故障</em></span></div>
+                </div>
+                <div class="srow head"><span class="th" data-copy-zh="组件" data-copy-en="Component">组件</span><span class="th">24h</span><span class="th end" data-copy-zh="可用率" data-copy-en="Uptime">可用率</span><span class="th end" data-copy-zh="状态" data-copy-en="State">状态</span></div>
+                <div id="service-list">
+                    <div class="srow"><div><strong>API Gateway</strong><small class="sub">api.supertoken.cc</small></div><div class="bars" aria-label="等待监控数据"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></div><div class="uptime"><b class="pending">--</b><small>P95 --</small></div><span class="state"><i></i><em data-copy-zh="未接入" data-copy-en="Not connected">未接入</em></span></div>
+                    <div class="srow"><div><strong>Anthropic Routes</strong><small class="sub" data-copy-zh="Claude 模型线路" data-copy-en="Claude routes">Claude 模型线路</small></div><div class="bars" aria-label="等待监控数据"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></div><div class="uptime"><b class="pending">--</b><small>P95 --</small></div><span class="state"><i></i><em data-copy-zh="未接入" data-copy-en="Not connected">未接入</em></span></div>
+                    <div class="srow"><div><strong>OpenAI Routes</strong><small class="sub" data-copy-zh="GPT / Codex 模型线路" data-copy-en="GPT / Codex routes">GPT / Codex 模型线路</small></div><div class="bars" aria-label="等待监控数据"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></div><div class="uptime"><b class="pending">--</b><small>P95 --</small></div><span class="state"><i></i><em data-copy-zh="未接入" data-copy-en="Not connected">未接入</em></span></div>
+                    <div class="srow"><div><strong>Google / xAI Routes</strong><small class="sub" data-copy-zh="Gemini 与 Grok 模型线路" data-copy-en="Gemini &amp; Grok routes">Gemini 与 Grok 模型线路</small></div><div class="bars" aria-label="等待监控数据"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></div><div class="uptime"><b class="pending">--</b><small>P95 --</small></div><span class="state"><i></i><em data-copy-zh="未接入" data-copy-en="Not connected">未接入</em></span></div>
+                    <div class="srow"><div><strong>Image &amp; Video Routes</strong><small class="sub" data-copy-zh="图片与视频生成线路" data-copy-en="Image &amp; video routes">图片与视频生成线路</small></div><div class="bars" aria-label="等待监控数据"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></div><div class="uptime"><b class="pending">--</b><small>P95 --</small></div><span class="state"><i></i><em data-copy-zh="未接入" data-copy-en="Not connected">未接入</em></span></div>
+                    <div class="srow"><div><strong>Console &amp; Billing</strong><small class="sub" data-copy-zh="控制台与账单服务" data-copy-en="Console &amp; billing">控制台与账单服务</small></div><div class="bars" aria-label="等待监控数据"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></div><div class="uptime"><b class="pending">--</b><small>P95 --</small></div><span class="state"><i></i><em data-copy-zh="未接入" data-copy-en="Not connected">未接入</em></span></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="section last">
+        <div class="wrap">
+            <div class="sect">
+                <div class="sect-head">
+                    <div class="sect-title"><h2 data-copy-zh="事件记录" data-copy-en="Incidents">事件记录</h2><span class="meta" data-copy-zh="故障、恢复与计划维护" data-copy-en="outages, recoveries and planned maintenance">故障、恢复与计划维护</span></div>
+                </div>
+                <div id="incident-list">
+                    <div class="empty" data-copy-zh="接入监控 API 后显示故障、恢复与计划维护记录。" data-copy-en="Incident, recovery and maintenance history appears once monitoring is connected.">接入监控 API 后显示故障、恢复与计划维护记录。</div>
+                </div>
+            </div>
+        </div>
+    </section>
+</main>
+
+<div id="site-footer-mount"></div>
 </body>
 </html>
